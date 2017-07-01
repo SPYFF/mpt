@@ -1,0 +1,557 @@
+/**
+ * @file
+ * @brief Thread handle functions
+ * @author Almasi, Bela; Debrecen, Hungary
+ * @date 2012.08.15.
+ * @copyright Project maintained by Almasi, Bela; Debrecen, Hungary
+ */
+
+#include <sys/time.h>
+#include "multipath.h"
+#include "mp_local.h"
+
+#include "cli.h"
+#include "auth.h"
+
+/**
+ * The thread to read data from the tunnel interface
+ */
+void * tunnel_read_thread (void * arg)
+{
+    bit_8   ver, grelen;
+    char    grebuff[2064];
+    char *buff;
+    int blen = 0, start, sh, sock, pind, i;
+    tunnel_type *tun;
+    connection_type *p;
+    struct sockaddr *saddr;
+
+    tun = (tunnel_type *)arg;
+// fprintf(stderr, "Tunnel read thread starts \n");
+
+    while(1) {
+// GRE in UDP needs maximum 16 bytes for the GRE header
+        buff = grebuff + 16;
+        blen = read(tun->fd, buff, 2048);
+        ver = (buff[0] & 0xF0) >> 4;
+        if (ver == 6) {
+            start = 8;
+            sh = SIZE_IN6ADDR;
+        }
+        else {
+            start = 12;
+            sh = SIZE_INADDR;
+        }
+        mpt_lock;
+        p = conn_search_ip(ver, (bit_32 *)&buff[start], (bit_32 *)&buff[start+sh],
+               mp_global_conn);
+        if (p) {
+            pind = p->path_index;
+            if ( (++p->path_packet) > p->mpath[pind].packet_max) {
+                p->path_packet = 1;
+                pind = (pind + 1) % p->path_count;
+                p->path_index = pind;
+            }
+            if (check_interface( p->mpath[pind].interface, p->mpath[pind].socket)) { // int. up
+//                if (p->mpath[pind].status == STAT_IF_DOWN) {
+//                     path_change_status(p, pind, STAT_OK);
+//    fprintf(stderr, "Interface %s could be changed state to UP.\n", p->mpath[pind].interface);
+//                }
+            }
+            else { // interface down
+                if (p->mpath[pind].status == STAT_OK) {
+                    p->path_packet = p->mpath[pind].packet_max+1;
+                    path_change_status(p, pind, STAT_IF_DOWN);
+    fprintf(stderr, "Interface %s changed state to DOWN.\n", p->mpath[pind].interface);
+                }
+            }
+
+            i = 0;
+            while ((p->mpath[pind].status != STAT_OK) && ( i <= MAX_PATH)) {
+                i++;
+                p->path_packet = 1;
+                pind = (pind + 1) % p->path_count;
+                p->path_index = pind;
+            }
+            sock = p->mpath[pind].socket;
+            saddr = (struct sockaddr *)&(p->mpath[pind].peer);
+        grelen = p->gre_length;
+        bit_32 greseq;
+        bit_32 *greseq_ptr;
+        greseq = p->conn_packet;
+	p->conn_packet++;
+//printf("Send seq: %d  grelen: %d\n", greseq, grelen);
+        if (p->reorder_window ) {
+		greseq_ptr = (bit_32 *)p->gre_header;
+                greseq_ptr[1] = htonl(greseq);
+        }
+        memcpy(grebuff+(16-grelen), p->gre_header, grelen);
+        } // if (p)
+        mpt_unlock;
+        if (p){ 
+      sendto(sock, grebuff+(16-grelen), blen+grelen, 0, saddr, sizeof(struct sockaddr_in6));
+    }
+
+    } // while 1
+
+    return NULL;
+}
+
+
+/**
+ * The thread to read data from the connection's socket
+ */
+void * socket_read_thread(void * arg)
+{
+
+
+
+    char  *buff, ipstr[128], ripstr[128], lipstr[128];
+    struct sockaddr_in6 clien;
+   // int sh; 
+    int cindex, blen = 0;
+    bit_8  grelen;
+    bit_32 *greseq;
+    grebuff_type *pcircle, *pgre;
+    socklen_t clien_size = sizeof clien;
+
+    path_type *path;
+    connection_type *con;
+    path = (path_type *)arg;
+  //fprintf(stderr, "Starting Data receive thread. \n");
+    con = path->connection;
+    struct timeval rcv_timeout;
+    memset(&rcv_timeout, 0, sizeof(struct timeval));
+    rcv_timeout.tv_sec = 2; //set timeout for 2 seconds
+    rcv_timeout.tv_usec = 100;
+
+  //  setsockopt(path->socket, SOL_SOCKET,SO_RCVTIMEO,(char*)&rcv_timeout, sizeof(struct timeval));
+ //   grelen = conn->gre_length; // it should consider the checksum, key and seq. flags to calculate the length, but we do not use them now
+    while (1) {
+        buff_unlock;
+        if (path->grebuffindex >= con->reorder_window) path->grebuffindex -= con->reorder_window;
+        pgre = &path->grebuffarray[path->grebuffindex];
+
+   //     setsockopt(path->socket, SOL_SOCKET,SO_RCVTIMEO,(char*)&rcv_timeout, sizeof(struct timeval));
+        blen = recvfrom(path->socket, pgre->buffer, sizeof(pgre->buffer), 0, (struct sockaddr *)&clien, &clien_size);
+        if(memcmp(&clien.sin6_addr, path->ip_remote, SIZE_IN6ADDR) != 0) {
+                      printf("Got UDP %d bytes from bad client. %d  %d\n", blen, errno, path->socket);
+                      continue; // We do not consider the packet, if the sender is not the peer
+        }
+        if (blen < 8) continue;
+        grelen = 4;
+        greseq = NULL;
+        if ( pgre->buffer[0] & 0x08 ) {
+              grelen += 4;
+              greseq = (bit_32 *)(&pgre->buffer[4]) ;
+        }
+        buff = pgre->buffer + grelen;
+        if (greseq) pgre->seq = ntohl(greseq[0]); else pgre->seq = 0;
+        pgre->grebufflen = blen;
+        pgre->grelen = grelen;
+        blen -= grelen;
+ if (grelen == 8) 
+      printf("Rcv Data,  Int: %s  GREseq:%d grebufflen:%d  grelen:%d   Waited seq:%d Type:%02X \n", path->interface, pgre->seq, pgre->grebufflen, pgre->grelen, con->seq_start, buff[0]);
+
+        if ((unsigned char)buff[0] < 0xA0 ){
+           buff_lock;
+
+/**
+ *  The function to send the buffered packets from the circulatebuffer
+ *  conn : the connection, which circulate buffer must be cleared
+ *  full : if not zero, then all the buffered packets will be sent out (even if empty places are between them)
+ */
+void send_circulate_packets(connection_type *conn, int full)
+{
+  bit_32 s_i, s_pktnum, s_sent, s_cindex, s_lastindex;
+  grebuff_type *s_pcircle, *s_last;
+
+  s_i = 0; s_sent = 0;
+  s_pktnum = conn->circlepackets;
+  s_lastindex = 0;
+  if ((conn) && (!s_pktnum)) {
+      conn->circlestart = 0;
+      conn->seq_start = 0;
+  } else {
+// printf("send_circulate_packets called, full = %d\n", full);
+      s_last = NULL; s_i = 0; s_sent = 0;
+      while ((s_sent < s_pktnum) && (s_i < conn->circle_window))
+      {
+           s_cindex = conn->circlestart + s_i;
+           if (s_cindex >= conn->circle_window) s_cindex -= conn->circle_window;
+           s_pcircle = conn->circlebuff[s_cindex];
+           if ((s_pcircle) && (s_pcircle->grebufflen > 0 )) {
+                   write(mp_global_tun->fd, &s_pcircle->buffer[s_pcircle->grelen], s_pcircle->grebufflen - s_pcircle->grelen );
+                   s_last = s_pcircle;
+                   s_lastindex = s_cindex;
+                   s_sent++;
+                   s_pcircle->grebufflen = 0;
+                   conn->circlebuff[s_cindex] = NULL;
+           }
+           else { if (!full) break;; }
+           s_i++;
+      }
+      if (full) {
+ printf("send_circle_packets full call sent out  %d packets \n", s_sent);
+           if (s_sent < s_pktnum) printf("Circle buffer full clear problem: sent %d packets instead of %d \n", s_sent, s_pktnum);
+                 conn->circlepackets = 0;
+                 conn->circlestart = 0;
+                 conn->seq_start = s_last->seq + 1;
+      } else { // not full sending, so we send only up to the first empy buffer
+// printf("send_circle_packets NOT full call, sent out %d packets \n", sent);
+           if (s_sent) {
+                 conn->circlepackets -= s_sent;
+                 conn->circlestart = s_lastindex + 1;
+                 if (conn->circlestart >= conn->circle_window ) conn->circlestart -= conn->circle_window;
+                 conn->seq_start = s_last->seq + 1;
+           }
+      } // if (full) elses
+  } // if conn && !pktnum
+  return;
+} // ********************************* send_circulate_packets end *******************************************
+
+           if ((!con->reorder_window) || (!greseq)) {
+              write(mp_global_tun->fd, &pgre->buffer[grelen], blen);
+           } 
+           else {
+//              if (pgre->seq < con->seq_start ) { // We do not accept smaller greseq values; comment out this if statement to accept them
+//                      printf("Received GRE sequence number too small: %d instead of %d; skipping it.\n", pgre->seq, con->seq_start);
+//                      buff_unlock;
+//                      continue;
+//              }
+
+              if (pgre->seq - con->seq_start >= con->reorder_window) { // thi is unsigned comparison, so true even if pgre->seq < con->seq 
+                      printf("GRE sequence numbering problem (too big seq arrived):\n");
+                      printf("    Circle index: %d,  Start seq(waited for): %d,  Arrived seq: %d \n", con->circlestart, con->seq_start, pgre->seq);
+                      printf("    Sending out packets from the buffer; accepting the new GRE seq from the peer \n");
+                      send_circulate_packets(con, 1);
+                      // con->seq_start = pgre->seq + 1
+                      continue;
+              }
+              cindex = con->circlestart + pgre->seq - con->seq_start;
+              if (cindex >= con->circle_window) cindex -= con->circle_window;
+
+              if ((con->circlebuff[cindex] ) && (con->circlebuff[cindex]->grebufflen) ) {
+                      printf("Circulate reorder array overloaded with %d packets. Loosing packet (seq: %d ) \n", con->circlepackets + 1, pgre->seq);
+                      send_circulate_packets(con, 1); //full buffer clean
+                      continue;
+              }
+              con->circlebuff[cindex] = pgre;
+              con->circlepackets++;
+// printf("Packet with greseq %d was placed into circlebuffer index:%d \n", pgre->seq, cindex);
+
+              pcircle = con->circlebuff[con->circlestart]; //  The packet we are waiting for arrived, send it out 
+//  if (pcircle) printf("cindex: %d, pcircle-grebufflen: %d, circlepackets: %d \n", cindex, pcircle->grebufflen, con->circlepackets ); 
+              if (con->circlepackets >= con->circle_window) {
+                       printf("Warning! Reorder window filled up: %d packets arrived. Sending out buffered packets. \n", con->circlepackets);
+              }
+
+              if ( (con->circlepackets) && (pcircle) && (pcircle->grebufflen - grelen > 0)) 
+                      send_circulate_packets(con, 0); // not full send, only up to the first empty pos.
+
+              path->grebuffindex++;
+              if (path->grebuffindex >= con->reorder_window) path->grebuffindex -= con->reorder_window;
+              if (path->grebuffarray[path->grebuffindex].grebufflen) {
+                      printf("Path GRE buffer overloaded! Packet lost! ");
+                      printf("Interface: %s Index: %d ; Clearing buffer.\n", path->interface, path->grebuffindex);
+                      send_circulate_packets(con,1);  // full send
+                      continue;
+              }
+           }
+        } // if buff[0] < A0 ******************************** CMD Arrived *********************************************** 
+        else { pgre->grebufflen = 0;   // The CMD packet is in buff[] with length blen; we sign the buffer place as empty
+              if ((unsigned char)buff[0] == CMD_KEEPALIVE) {
+         //     sh = authSize(buff[2]); // should be used for authentication
+//              cp = conn_search_ip(6, (bit_32 *)&(buff[sh+24]), (bit_32 *)&(buff[sh+8]), mp_global_conn);
+//            cp = mp_global_conn;
+//    printf("Keepalive CMD on DATA received, connection found \n");
+                  if(memcmp(&clien.sin6_addr, path->ip_remote, SIZE_IN6ADDR) == 0) {  //check if the keepalive came from the peer
+                        path->last_keepalive = time(NULL);
+                        if(path->status == STAT_PATH_DOWN) {
+                            printf("keepalive received\n");
+                            if (path->ip_version == 6) {
+                                  inet_ntop(AF_INET6, path->ip_remote, ripstr, 128);
+                                  inet_ntop(AF_INET6, path->ip_local, lipstr, 128);
+                            } else {
+                                  inet_ntop(AF_INET, &path->ip_remote[3], ripstr, 128);
+                                  inet_ntop(AF_INET, &path->ip_local[3], lipstr, 128);
+                            }
+                            path->status = STAT_OK;
+                            path->last_keepalive = time(NULL);
+                            fprintf(stderr, "Path status changed to 0x%02X (%s -> %s) \n", STAT_OK, lipstr, ripstr);
+                        }
+                  }
+                continue;
+              } // IF CMD_KEEPALIVE
+              else {
+                inet_ntop(AF_INET6, &clien.sin6_addr, ipstr, 128);
+                fprintf(stderr, "Got command from a data socket. Peer address: %s\n",ipstr);
+              }
+        }
+    } // while(1)
+    return NULL;
+}
+
+
+
+/**
+ * The thread to read commands from the cmd socket
+ */
+void * cmd_read_thread(void *arg)
+{
+    char buff[SIZE_DGRAM], lbuff[2058], ripstr[128];
+    struct sockaddr_in6 client;
+    unsigned int csize = sizeof client;
+    int sock, i, ret = 0, blen = 0;
+    bit_8 sh;
+    struct timeval timer, tv, ival;
+
+    connection_type *cp;
+    sock = mp_global_tun->cmd_socket_rcv;
+
+    // set socket timeout
+    memset(&tv, 0, sizeof(tv));
+    tv.tv_usec = 500000; // 0.5s
+    setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, (char*)&tv, sizeof(tv));
+
+    // set keepalive timer
+    memset(&ival, 0, sizeof(ival));
+    ival.tv_sec = CHECK_KEEPALIVE;
+    gettimeofday(&tv, NULL);
+    timeradd(&tv, &ival, &timer);
+
+    while (1) {
+            ret = 0;
+            blen = recvfrom(sock, buff, sizeof(buff), 0,
+                        (struct sockaddr *)&client, &csize);
+
+            // check keepalives if timer expired
+            gettimeofday(&tv, NULL);
+            if(timercmp(&timer, &tv, <)) {
+                cp = mp_global_conn;
+                while(cp) {
+                    for(i=0; i<cp->path_count; i++) {
+                        if(cp->mpath[i].last_keepalive == 0) cp->mpath[i].last_keepalive = time(NULL); // allow some converge time after startup
+                        else if(cp->mpath[i].deadtimer > 0 && cp->mpath[i].last_keepalive + cp->mpath[i].deadtimer < time(NULL) &&
+                           cp->mpath[i].status == STAT_OK) {
+                            printf("no keepalive received\n");
+                            path_change_status(cp, i, STAT_PATH_DOWN);
+                        }
+                    }
+                    cp = cp->next;
+                }
+                timeradd(&tv, &ival, &timer);
+            }
+
+            // no data received
+            if (blen < 0) {
+                continue;
+            }
+
+            buff[blen] = 0;
+            if ( check_loopback((char *)&client.sin6_addr)) {
+ printf("Cmd: %s\n", buff);
+                //if (buff[blen] != 0x00) buff[blen] = 0x00;
+                //ret =  do_local_cmd(buff);
+                ret = exec_cmd(buff, sock, (struct sockaddr *) &client, csize);
+                if (ret) sprintf(lbuff, "CMD_OK:%s", buff);
+                else sprintf(lbuff, "CMD-ERROR:%s", buff);
+                sendto(sock, lbuff, strlen(lbuff), 0, (struct sockaddr *)&client, csize);
+                sendto(sock, lbuff, 0, 0, (struct sockaddr *)&client, csize);   // mark end of data stream
+                continue;
+            }
+
+            if ((unsigned char)buff[0] < 0xA0 ) {
+                inet_ntop(AF_INET6, &client.sin6_addr, ripstr, 128);
+                fprintf(stderr, "Got data from the cmd socket. Peer address: %s\n",ripstr);
+                continue;
+            } else {
+//      inet_ntop(AF_INET6, &client.sin6_addr, ripstr, 128);
+//          fprintf(stderr, "Got CMD: %02X  Peer address: %s\n",buff[0], ripstr);
+        }
+
+
+            sh = authSize(buff[2]);
+            cp = conn_search_ip(6, (bit_32 *)&(buff[sh+24]), (bit_32 *)&(buff[sh+8]), mp_global_conn);
+//      cp = mp_global_conn;  // for testing only
+
+            // save received keepalive packet
+            if ((unsigned char)buff[0] == CMD_KEEPALIVE) {
+                if(cp) {
+                    for(i=0; i<cp->path_count; i++) {
+                        if(memcmp(&client.sin6_addr, cp->mpath[i].ip_remote, SIZE_IN6ADDR) == 0) {
+                            cp->mpath[i].last_keepalive = time(NULL);
+                            if(cp->mpath[i].status == STAT_PATH_DOWN) {
+                                printf("keepalive received\n");
+                                path_change_status(cp, i, STAT_OK);
+                            }
+                        }
+                    }
+                }
+                continue;
+            }
+
+ //  char lipstr[128]; inet_ntop(AF_INET6, cp->ip_remote, lipstr, 128);
+ //  char ripstr[128]; inet_ntop(AF_INET6, &(buff[sh+8]), ripstr, 128);
+ //  printf("c1 end %s %s\n", ripstr, lipstr);
+
+            if (!mp_global_server && !cp ) continue; // peer is not allowed to send cmd
+
+            if(!cp) {
+                if(buff[sh+4] != 1) {
+                    fprintf(stderr, "Must have connection after round 1\n");
+                    continue;
+                }
+
+                // create connection
+                cp = conn_new(mp_global_conn);
+                cp->ip_version = buff[sh+5];
+                memcpy(cp->ip_local,  &buff[sh+24], SIZE_IN6ADDR);
+                memcpy(cp->ip_remote, &buff[sh+ 8], SIZE_IN6ADDR);
+            } else {
+                if(cp->waitround == 0 && buff[sh+4]>1) {
+                    fprintf(stderr, "Cannot receive round %d, send round 1 first.\n", buff[sh+4]);
+                    continue; // Session not initiated
+                }
+                if(cp->waitround > 0 && buff[sh+4] > cp->waitround) {
+                    fprintf(stderr, "Cannot receive round %d more than expected (%d)\n", buff[sh+4], cp->waitround);
+                    continue; // Not reached this state
+                }
+            }
+
+            if(!authTest(cp, buff, blen)) {
+                fprintf(stderr, "Packet authentication data is bad\n");
+                continue;
+            }
+
+            // don't need do_command() if round=1
+            if(buff[sh+4] == 1 || do_command(cp, buff, &blen) > 0) {
+                // Send reply
+                buff[sh+4] += 1; i = 0; ret = -1;
+                cp->waitround = buff[sh+4] + 1;
+
+                authSet(cp, buff, blen);
+
+                while ((i<=5) && (ret<0)) {
+                    i++;
+                    ret = sendto(sock, buff, blen, 0, (struct sockaddr *)&client, csize);
+                    if(ret<0) fprintf(stderr, "Sending response failed with result %d\n", ret);
+                }
+            }
+
+    } // while 1
+    return NULL;
+}
+
+
+/**
+ * The thread to send keepalive messages
+ * Each connection has its own keepalive_send_thread - 2015.08.30.
+ */
+void * keepalive_send_thread(void * arg)
+{
+    time_t now, last;
+    connection_type * conn;
+    int i, path, sock, blen, grelen;
+    unsigned int socksize = sizeof(struct sockaddr_in6);
+    struct sockaddr_in6 saddr;
+    char grecmdbuf[56];
+    char *cmdbuf;
+
+    conn = (connection_type *) arg;
+    // construct keepalive packet
+    memset(grecmdbuf, 0, sizeof(grecmdbuf));
+
+    cmdbuf = grecmdbuf+16;
+    cmdbuf[0] = CMD_KEEPALIVE;
+    last = time(NULL);
+
+    while(1) {
+        now = time(NULL);
+        if((now-last) == 0) continue;
+
+//        conn = mp_global_conn;
+//        while(conn) {
+            for(i = 1; i <=(now-last); i++) {
+                for(path = 0; path < conn->path_count; ++path) {
+                    if(conn->mpath[path].status != STAT_IF_DOWN) {
+                        if(conn->mpath[path].keepalive > 0 && (last+i) % conn->mpath[path].keepalive == 0) {
+                            sock = conn->mpath[path].socket;
+                 //           grelen = conn->gre_length; We don't use seq. numbers in keepalive
+                            grelen = 4;
+                            cmdbuf[5] = conn->mpath[path].ip_version;
+                            memcpy(&cmdbuf[8], conn->ip_local, SIZE_IN6ADDR);
+                            memcpy(&cmdbuf[24], conn->ip_remote, SIZE_IN6ADDR);
+                            memcpy(grecmdbuf+16-grelen, conn->gre_header, grelen);
+                            grecmdbuf[16-grelen] &= 0xEF;
+
+                            blen = sizeof(grecmdbuf)-16+grelen;
+
+                            memcpy(&saddr, &conn->mpath[path].peer, socksize);
+                            sendto(sock, grecmdbuf+16-grelen, blen, 0, (struct sockaddr *)&saddr, socksize);
+                        }
+                    }
+                }
+            }
+
+//            conn = conn->next;
+//        } // while conn
+        last = now;
+        usleep(990000);
+    } // while 1
+}
+
+/**
+ * The thread to send keepalive messages -old, before 2015.08
+ */
+void * keepalive_send_thread(void * arg)
+{
+    time_t now, last;
+    connection_type * conn;
+    int i, path, sock, blen, grelen;
+    unsigned int socksize = sizeof(struct sockaddr_in6);
+    struct sockaddr_in6 saddr;
+    char grecmdbuf[56];
+    char *cmdbuf;
+
+    // construct keepalive packet
+    memset(grecmdbuf, 0, sizeof(grecmdbuf));
+
+    cmdbuf = grecmdbuf+16;
+    cmdbuf[0] = CMD_KEEPALIVE;
+    last = time(NULL);
+    
+    while(1) {
+        now = time(NULL);
+        if((now-last) == 0) continue;
+
+        conn = mp_global_conn;
+        while(conn) {
+            for(i = 1; i <=(now-last); i++) {
+                for(path = 0; path < conn->path_count; ++path) {
+                    if(conn->mpath[path].status != STAT_IF_DOWN) {
+                        if(conn->mpath[path].keepalive > 0 && (last+i) % conn->mpath[path].keepalive == 0) {
+                            sock = conn->mpath[path].socket;
+                 //           grelen = conn->gre_length; We don't use seq. numbers in keepalive
+                            grelen = 4;
+                            cmdbuf[5] = conn->mpath[path].ip_version;
+                            memcpy(&cmdbuf[8], conn->ip_local, SIZE_IN6ADDR);
+                            memcpy(&cmdbuf[24], conn->ip_remote, SIZE_IN6ADDR);
+                            memcpy(grecmdbuf+16-grelen, conn->gre_header, grelen);
+                            grecmdbuf[16-grelen] &= 0xF7;
+
+                            blen = sizeof(grecmdbuf)-16+grelen;
+
+                            memcpy(&saddr, &conn->mpath[path].peer, socksize);
+                            sendto(sock, grecmdbuf+16-grelen, blen, 0, (struct sockaddr *)&saddr, socksize);
+                        }
+                    }
+                }
+            }
+
+            conn = conn->next;
+        }
+        last = now;
+        usleep(950000);
+    }
+}

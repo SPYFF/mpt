@@ -1,0 +1,243 @@
+\hypertarget{auth_8c}{\section{/\-Users/kiskele/\-Dropbox/suli/mptcp/source/src/mptlib/auth.c File Reference}
+\label{auth_8c}\index{/\-Users/kiskele/\-Dropbox/suli/mptcp/source/src/mptlib/auth.\-c@{/\-Users/kiskele/\-Dropbox/suli/mptcp/source/src/mptlib/auth.\-c}}
+}
+
+
+Authentication and encryption functions.  
+
+
+{\ttfamily \#include $<$openssl/evp.\-h$>$}\\*
+{\ttfamily \#include \char`\"{}multipath.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}mp\-\_\-local.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}auth.\-h\char`\"{}}\\*
+Include dependency graph for auth.\-c\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{auth_8c__incl}
+\end{center}
+\end{figure}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{auth_8c_a10171dc5f22d94862ab487f234cd79ea}{sha256} (char $\ast$buff, int size, char $\ast$key, int keysize, char $\ast$out, int $\ast$outsize)
+\item 
+void \hyperlink{auth_8c_a9a262abe35451c5dd2b46634025b6732}{print\-Hash} (char $\ast$buff, int size)
+\item 
+int \hyperlink{auth_8c_a6cbca91e70f0e2c555e6a09ea8405e44}{auth\-Size} (int auth\-Type)
+\item 
+int \hyperlink{auth_8c_af4509f52b636ad431f6430d6485a16c8}{auth\-Test} (\hyperlink{multipath_8h_a8fd58c5c9a4f2463735bc00b930e3b05}{connection\-\_\-type} $\ast$conn, char $\ast$buff, int size)
+\item 
+void \hyperlink{auth_8c_ace9ba5254e71e8213c296146d3362567}{auth\-Set} (\hyperlink{multipath_8h_a8fd58c5c9a4f2463735bc00b930e3b05}{connection\-\_\-type} $\ast$conn, char $\ast$buff, int size)
+\item 
+void \hyperlink{auth_8c_a380f3a385dc698e6b0a02d5d2a281e99}{set\-Key} (\hyperlink{multipath_8h_a8fd58c5c9a4f2463735bc00b930e3b05}{connection\-\_\-type} $\ast$conn, char $\ast$hex)
+\item 
+void \hyperlink{auth_8c_a2e37f6aae6bde736bfefc6ce630fe3c8}{save\-Key} (F\-I\-L\-E $\ast$fd, \hyperlink{multipath_8h_a8fd58c5c9a4f2463735bc00b930e3b05}{connection\-\_\-type} $\ast$conn)
+\item 
+int \hyperlink{auth_8c_a36e10f423e5b7de0da0f32e6baf09153}{key\-Size} (int auth\-Type)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Authentication and encryption functions. \begin{DoxyAuthor}{Author}
+Kelemen Tamas \href{mailto:kiskele@krc.hu}{\tt kiskele@krc.\-hu} 
+\end{DoxyAuthor}
+
+
+Definition in file \hyperlink{auth_8c_source}{auth.\-c}.
+
+
+
+\subsection{Function Documentation}
+\hypertarget{auth_8c_ace9ba5254e71e8213c296146d3362567}{\index{auth.\-c@{auth.\-c}!auth\-Set@{auth\-Set}}
+\index{auth\-Set@{auth\-Set}!auth.c@{auth.\-c}}
+\subsubsection[{auth\-Set}]{\setlength{\rightskip}{0pt plus 5cm}void auth\-Set (
+\begin{DoxyParamCaption}
+\item[{{\bf connection\-\_\-type} $\ast$}]{conn, }
+\item[{char $\ast$}]{buff, }
+\item[{int}]{size}
+\end{DoxyParamCaption}
+)}}\label{auth_8c_ace9ba5254e71e8213c296146d3362567}
+Sets the correct authentication data in the packet before sending it
+
+
+\begin{DoxyParams}{Parameters}
+{\em conn} & The connection to the actual peer \\
+\hline
+{\em buff} & The packet to send \\
+\hline
+{\em size} & Size of the packet\\
+\hline
+\end{DoxyParams}
+\begin{DoxyRefDesc}{Todo}
+\item[\hyperlink{todo__todo000003}{Todo}]We could search for the connection if conn is N\-U\-L\-L \end{DoxyRefDesc}
+
+
+Definition at line 139 of file auth.\-c.
+
+\hypertarget{auth_8c_a6cbca91e70f0e2c555e6a09ea8405e44}{\index{auth.\-c@{auth.\-c}!auth\-Size@{auth\-Size}}
+\index{auth\-Size@{auth\-Size}!auth.c@{auth.\-c}}
+\subsubsection[{auth\-Size}]{\setlength{\rightskip}{0pt plus 5cm}int auth\-Size (
+\begin{DoxyParamCaption}
+\item[{int}]{auth\-Type}
+\end{DoxyParamCaption}
+)}}\label{auth_8c_a6cbca91e70f0e2c555e6a09ea8405e44}
+Returns how large authentication header used in the packets for a specified auth. type
+
+
+\begin{DoxyParams}{Parameters}
+{\em auth\-Type} & Used authentication type. See \hyperlink{group___auth_types}{Authentication types} for the complete list \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The authentication header length 
+\end{DoxyReturn}
+
+
+Definition at line 63 of file auth.\-c.
+
+\hypertarget{auth_8c_af4509f52b636ad431f6430d6485a16c8}{\index{auth.\-c@{auth.\-c}!auth\-Test@{auth\-Test}}
+\index{auth\-Test@{auth\-Test}!auth.c@{auth.\-c}}
+\subsubsection[{auth\-Test}]{\setlength{\rightskip}{0pt plus 5cm}int auth\-Test (
+\begin{DoxyParamCaption}
+\item[{{\bf connection\-\_\-type} $\ast$}]{conn, }
+\item[{char $\ast$}]{buff, }
+\item[{int}]{size}
+\end{DoxyParamCaption}
+)}}\label{auth_8c_af4509f52b636ad431f6430d6485a16c8}
+Check the received packet whether the authentication data is correct
+
+
+\begin{DoxyParams}{Parameters}
+{\em conn} & The connection to the actual peer \\
+\hline
+{\em buff} & Received data \\
+\hline
+{\em size} & Size of the data \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+False if the packet data
+\end{DoxyReturn}
+\begin{DoxyRefDesc}{Todo}
+\item[\hyperlink{todo__todo000002}{Todo}]We could search for the connection if conn is N\-U\-L\-L \end{DoxyRefDesc}
+
+
+Definition at line 84 of file auth.\-c.
+
+\hypertarget{auth_8c_a36e10f423e5b7de0da0f32e6baf09153}{\index{auth.\-c@{auth.\-c}!key\-Size@{key\-Size}}
+\index{key\-Size@{key\-Size}!auth.c@{auth.\-c}}
+\subsubsection[{key\-Size}]{\setlength{\rightskip}{0pt plus 5cm}int key\-Size (
+\begin{DoxyParamCaption}
+\item[{int}]{auth\-Type}
+\end{DoxyParamCaption}
+)}}\label{auth_8c_a36e10f423e5b7de0da0f32e6baf09153}
+Returns how large unique key is used for the authentication \begin{DoxyReturn}{Returns}
+Size of the auth\-\_\-key 
+\end{DoxyReturn}
+
+
+Definition at line 209 of file auth.\-c.
+
+\hypertarget{auth_8c_a9a262abe35451c5dd2b46634025b6732}{\index{auth.\-c@{auth.\-c}!print\-Hash@{print\-Hash}}
+\index{print\-Hash@{print\-Hash}!auth.c@{auth.\-c}}
+\subsubsection[{print\-Hash}]{\setlength{\rightskip}{0pt plus 5cm}void print\-Hash (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{buff, }
+\item[{int}]{size}
+\end{DoxyParamCaption}
+)}}\label{auth_8c_a9a262abe35451c5dd2b46634025b6732}
+Display a H\-A\-S\-H value in H\-E\-X format on the standard output (useful for testing)
+
+
+\begin{DoxyParams}{Parameters}
+{\em buff} & H\-A\-S\-H value \\
+\hline
+{\em size} & Size of the buff parameter \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 50 of file auth.\-c.
+
+\hypertarget{auth_8c_a2e37f6aae6bde736bfefc6ce630fe3c8}{\index{auth.\-c@{auth.\-c}!save\-Key@{save\-Key}}
+\index{save\-Key@{save\-Key}!auth.c@{auth.\-c}}
+\subsubsection[{save\-Key}]{\setlength{\rightskip}{0pt plus 5cm}void save\-Key (
+\begin{DoxyParamCaption}
+\item[{F\-I\-L\-E $\ast$}]{fd, }
+\item[{{\bf connection\-\_\-type} $\ast$}]{conn}
+\end{DoxyParamCaption}
+)}}\label{auth_8c_a2e37f6aae6bde736bfefc6ce630fe3c8}
+Save authentication key in H\-E\-X format to the configuration file
+
+
+\begin{DoxyParams}{Parameters}
+{\em fd} & The F\-I\-L\-E pointer to the configuration file \\
+\hline
+{\em conn} & The connection which contains the authentication datas \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 190 of file auth.\-c.
+
+\hypertarget{auth_8c_a380f3a385dc698e6b0a02d5d2a281e99}{\index{auth.\-c@{auth.\-c}!set\-Key@{set\-Key}}
+\index{set\-Key@{set\-Key}!auth.c@{auth.\-c}}
+\subsubsection[{set\-Key}]{\setlength{\rightskip}{0pt plus 5cm}void set\-Key (
+\begin{DoxyParamCaption}
+\item[{{\bf connection\-\_\-type} $\ast$}]{conn, }
+\item[{char $\ast$}]{hex}
+\end{DoxyParamCaption}
+)}}\label{auth_8c_a380f3a385dc698e6b0a02d5d2a281e99}
+Converts authentication key from H\-E\-X to binary and saves it in the connection struct. 
+\begin{DoxyParams}{Parameters}
+{\em conn} & The connection to use \\
+\hline
+{\em hex} & The authentication key stored in H\-E\-X format \\
+\hline
+\end{DoxyParams}
+\begin{DoxyPrecond}{Precondition}
+The auth\-\_\-type needed to be set before using this function 
+\end{DoxyPrecond}
+
+
+Definition at line 177 of file auth.\-c.
+
+\hypertarget{auth_8c_a10171dc5f22d94862ab487f234cd79ea}{\index{auth.\-c@{auth.\-c}!sha256@{sha256}}
+\index{sha256@{sha256}!auth.c@{auth.\-c}}
+\subsubsection[{sha256}]{\setlength{\rightskip}{0pt plus 5cm}int sha256 (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{buff, }
+\item[{int}]{size, }
+\item[{char $\ast$}]{key, }
+\item[{int}]{keysize, }
+\item[{char $\ast$}]{out, }
+\item[{int $\ast$}]{outsize}
+\end{DoxyParamCaption}
+)}}\label{auth_8c_a10171dc5f22d94862ab487f234cd79ea}
+Generate S\-H\-A-\/256 H\-A\-S\-H
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em buff} & Generate hash from this string \\
+\hline
+\mbox{\tt in}  & {\em size} & Size of the buff parameter \\
+\hline
+\mbox{\tt in}  & {\em key} & Append this secret key to buff if larger then 0 byte \\
+\hline
+\mbox{\tt in}  & {\em keysize} & Size of the key parameter \\
+\hline
+\mbox{\tt out}  & {\em out} & Put the generated hash key to this value \\
+\hline
+\mbox{\tt out}  & {\em outsize} & Length of the generated hash\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+This function always return true 
+\end{DoxyReturn}
+\begin{DoxyRefDesc}{Todo}
+\item[\hyperlink{todo__todo000001}{Todo}]Do some error checking \end{DoxyRefDesc}
+
+
+Definition at line 26 of file auth.\-c.
+

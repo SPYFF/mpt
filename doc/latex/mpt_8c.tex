@@ -1,0 +1,53 @@
+\hypertarget{mpt_8c}{\section{/\-Users/kiskele/\-Dropbox/suli/mptcp/source/src/mpt/mpt.c File Reference}
+\label{mpt_8c}\index{/\-Users/kiskele/\-Dropbox/suli/mptcp/source/src/mpt/mpt.\-c@{/\-Users/kiskele/\-Dropbox/suli/mptcp/source/src/mpt/mpt.\-c}}
+}
+
+
+Main code of the client application.  
+
+
+{\ttfamily \#include \char`\"{}cli.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}multipath.\-h\char`\"{}}\\*
+Include dependency graph for mpt.\-c\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{mpt_8c__incl}
+\end{center}
+\end{figure}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{mpt_8c_ad003910d9adf5b70389eac799a63181c}{\#define {\bfseries exerror}(c, z)~\{fprintf(stderr,\char`\"{}\%s Errno\-: \%d\textbackslash{}n\char`\"{},c, z); exit(z);\}}\label{mpt_8c_ad003910d9adf5b70389eac799a63181c}
+
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{mpt_8c_a13ab7af37efc79dd5791960a0bd63bbe}{int {\bfseries getcmd} (int sock, char $\ast$buff, int blen, int flags, struct sockaddr $\ast$saddr, unsigned int $\ast$ssize)}\label{mpt_8c_a13ab7af37efc79dd5791960a0bd63bbe}
+
+\item 
+int \hyperlink{mpt_8c_a3c04138a5bfe5d72780bb7e82a18e627}{main} (int argc, char $\ast$$\ast$argv)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Main code of the client application. 
+
+Definition in file \hyperlink{mpt_8c_source}{mpt.\-c}.
+
+
+
+\subsection{Function Documentation}
+\hypertarget{mpt_8c_a3c04138a5bfe5d72780bb7e82a18e627}{\index{mpt.\-c@{mpt.\-c}!main@{main}}
+\index{main@{main}!mpt.c@{mpt.\-c}}
+\subsubsection[{main}]{\setlength{\rightskip}{0pt plus 5cm}int main (
+\begin{DoxyParamCaption}
+\item[{int}]{argc, }
+\item[{char $\ast$$\ast$}]{argv}
+\end{DoxyParamCaption}
+)}}\label{mpt_8c_a3c04138a5bfe5d72780bb7e82a18e627}
+Main function of client application that parses the C\-L\-I input and sends that to the server. 
+
+Definition at line 44 of file mpt.\-c.
+

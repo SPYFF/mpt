@@ -1,0 +1,94 @@
+\hypertarget{thread_8c}{\section{/\-Users/kiskele/\-Dropbox/suli/mptcp/source/src/mptlib/thread.c File Reference}
+\label{thread_8c}\index{/\-Users/kiskele/\-Dropbox/suli/mptcp/source/src/mptlib/thread.\-c@{/\-Users/kiskele/\-Dropbox/suli/mptcp/source/src/mptlib/thread.\-c}}
+}
+
+
+Thread handle functions.  
+
+
+{\ttfamily \#include $<$sys/time.\-h$>$}\\*
+{\ttfamily \#include \char`\"{}multipath.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}mp\-\_\-local.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}cli.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}auth.\-h\char`\"{}}\\*
+Include dependency graph for thread.\-c\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{thread_8c__incl}
+\end{center}
+\end{figure}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void $\ast$ \hyperlink{thread_8c_aeacd27696191f244b5620c704ae1afc3}{tunnel\-\_\-read\-\_\-thread} (void $\ast$arg)
+\item 
+void $\ast$ \hyperlink{thread_8c_acdb36d82fb3d0ab030bddbb6a987465b}{socket\-\_\-read\-\_\-thread} (void $\ast$arg)
+\item 
+void $\ast$ \hyperlink{thread_8c_af0542818843fd3fe1827af3a38c79866}{cmd\-\_\-read\-\_\-thread} (void $\ast$arg)
+\item 
+void $\ast$ \hyperlink{thread_8c_a74eb2b13ac9056bde2d996af471dd7ea}{keepalive\-\_\-send\-\_\-thread} (void $\ast$arg)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Thread handle functions. \begin{DoxyAuthor}{Author}
+Almasi, Bela; Debrecen, Hungary 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+2012.\-08.\-15. 
+\end{DoxyDate}
+\begin{DoxyCopyright}{Copyright}
+Project maintained by Almasi, Bela; Debrecen, Hungary 
+\end{DoxyCopyright}
+
+
+Definition in file \hyperlink{thread_8c_source}{thread.\-c}.
+
+
+
+\subsection{Function Documentation}
+\hypertarget{thread_8c_af0542818843fd3fe1827af3a38c79866}{\index{thread.\-c@{thread.\-c}!cmd\-\_\-read\-\_\-thread@{cmd\-\_\-read\-\_\-thread}}
+\index{cmd\-\_\-read\-\_\-thread@{cmd\-\_\-read\-\_\-thread}!thread.c@{thread.\-c}}
+\subsubsection[{cmd\-\_\-read\-\_\-thread}]{\setlength{\rightskip}{0pt plus 5cm}void$\ast$ cmd\-\_\-read\-\_\-thread (
+\begin{DoxyParamCaption}
+\item[{void $\ast$}]{arg}
+\end{DoxyParamCaption}
+)}}\label{thread_8c_af0542818843fd3fe1827af3a38c79866}
+The thread to read commands from the cmd socket 
+
+Definition at line 115 of file thread.\-c.
+
+\hypertarget{thread_8c_a74eb2b13ac9056bde2d996af471dd7ea}{\index{thread.\-c@{thread.\-c}!keepalive\-\_\-send\-\_\-thread@{keepalive\-\_\-send\-\_\-thread}}
+\index{keepalive\-\_\-send\-\_\-thread@{keepalive\-\_\-send\-\_\-thread}!thread.c@{thread.\-c}}
+\subsubsection[{keepalive\-\_\-send\-\_\-thread}]{\setlength{\rightskip}{0pt plus 5cm}void$\ast$ keepalive\-\_\-send\-\_\-thread (
+\begin{DoxyParamCaption}
+\item[{void $\ast$}]{arg}
+\end{DoxyParamCaption}
+)}}\label{thread_8c_a74eb2b13ac9056bde2d996af471dd7ea}
+The thread to send keepalive messages 
+
+Definition at line 258 of file thread.\-c.
+
+\hypertarget{thread_8c_acdb36d82fb3d0ab030bddbb6a987465b}{\index{thread.\-c@{thread.\-c}!socket\-\_\-read\-\_\-thread@{socket\-\_\-read\-\_\-thread}}
+\index{socket\-\_\-read\-\_\-thread@{socket\-\_\-read\-\_\-thread}!thread.c@{thread.\-c}}
+\subsubsection[{socket\-\_\-read\-\_\-thread}]{\setlength{\rightskip}{0pt plus 5cm}void$\ast$ socket\-\_\-read\-\_\-thread (
+\begin{DoxyParamCaption}
+\item[{void $\ast$}]{arg}
+\end{DoxyParamCaption}
+)}}\label{thread_8c_acdb36d82fb3d0ab030bddbb6a987465b}
+The thread to read data from the connection's socket 
+
+Definition at line 87 of file thread.\-c.
+
+\hypertarget{thread_8c_aeacd27696191f244b5620c704ae1afc3}{\index{thread.\-c@{thread.\-c}!tunnel\-\_\-read\-\_\-thread@{tunnel\-\_\-read\-\_\-thread}}
+\index{tunnel\-\_\-read\-\_\-thread@{tunnel\-\_\-read\-\_\-thread}!thread.c@{thread.\-c}}
+\subsubsection[{tunnel\-\_\-read\-\_\-thread}]{\setlength{\rightskip}{0pt plus 5cm}void$\ast$ tunnel\-\_\-read\-\_\-thread (
+\begin{DoxyParamCaption}
+\item[{void $\ast$}]{arg}
+\end{DoxyParamCaption}
+)}}\label{thread_8c_aeacd27696191f244b5620c704ae1afc3}
+The thread to read data from the tunnel interface 
+
+Definition at line 19 of file thread.\-c.
+

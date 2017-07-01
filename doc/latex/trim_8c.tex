@@ -1,0 +1,91 @@
+\hypertarget{trim_8c}{\section{/\-Users/kiskele/\-Dropbox/suli/mptcp/source/src/mptlib/trim.c File Reference}
+\label{trim_8c}\index{/\-Users/kiskele/\-Dropbox/suli/mptcp/source/src/mptlib/trim.\-c@{/\-Users/kiskele/\-Dropbox/suli/mptcp/source/src/mptlib/trim.\-c}}
+}
+
+
+Public domain implementations of in-\/place string trim functions.  
+
+
+{\ttfamily \#include $<$ctype.\-h$>$}\\*
+{\ttfamily \#include $<$string.\-h$>$}\\*
+Include dependency graph for trim.\-c\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=202pt]{trim_8c__incl}
+\end{center}
+\end{figure}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+char $\ast$ \hyperlink{trim_8c_a897834a6ab83257290ce165e99366d43}{ltrim} (char $\ast$s)
+\item 
+char $\ast$ \hyperlink{trim_8c_acdfc0f8ee81107535c88f945cbfeb305}{rtrim} (char $\ast$s)
+\item 
+char $\ast$ \hyperlink{trim_8c_a8bd9dd70049fb4e00071d0d73bb8d2a0}{trim} (char $\ast$s)
+\item 
+char $\ast$ \hyperlink{trim_8c_a5274950e8822c442ca0993a7f50f13d9}{basename} (char $\ast$string)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Public domain implementations of in-\/place string trim functions. \begin{DoxyAuthor}{Author}
+Michael Burr \href{mailto:michael.burr@nth-element.com}{\tt michael.\-burr@nth-\/element.\-com} 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+2010 
+\end{DoxyDate}
+
+
+Definition in file \hyperlink{trim_8c_source}{trim.\-c}.
+
+
+
+\subsection{Function Documentation}
+\hypertarget{trim_8c_a5274950e8822c442ca0993a7f50f13d9}{\index{trim.\-c@{trim.\-c}!basename@{basename}}
+\index{basename@{basename}!trim.c@{trim.\-c}}
+\subsubsection[{basename}]{\setlength{\rightskip}{0pt plus 5cm}char$\ast$ basename (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{string}
+\end{DoxyParamCaption}
+)}}\label{trim_8c_a5274950e8822c442ca0993a7f50f13d9}
+Strip down path and get filename \begin{DoxyAuthor}{Author}
+Kelemen Tamas 
+\end{DoxyAuthor}
+
+
+Definition at line 64 of file trim.\-c.
+
+\hypertarget{trim_8c_a897834a6ab83257290ce165e99366d43}{\index{trim.\-c@{trim.\-c}!ltrim@{ltrim}}
+\index{ltrim@{ltrim}!trim.c@{trim.\-c}}
+\subsubsection[{ltrim}]{\setlength{\rightskip}{0pt plus 5cm}char$\ast$ ltrim (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{s}
+\end{DoxyParamCaption}
+)}}\label{trim_8c_a897834a6ab83257290ce165e99366d43}
+Strip whitespace from the beginning of a string 
+
+Definition at line 15 of file trim.\-c.
+
+\hypertarget{trim_8c_acdfc0f8ee81107535c88f945cbfeb305}{\index{trim.\-c@{trim.\-c}!rtrim@{rtrim}}
+\index{rtrim@{rtrim}!trim.c@{trim.\-c}}
+\subsubsection[{rtrim}]{\setlength{\rightskip}{0pt plus 5cm}char$\ast$ rtrim (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{s}
+\end{DoxyParamCaption}
+)}}\label{trim_8c_acdfc0f8ee81107535c88f945cbfeb305}
+Strip whitespace from the end of a string 
+
+Definition at line 32 of file trim.\-c.
+
+\hypertarget{trim_8c_a8bd9dd70049fb4e00071d0d73bb8d2a0}{\index{trim.\-c@{trim.\-c}!trim@{trim}}
+\index{trim@{trim}!trim.c@{trim.\-c}}
+\subsubsection[{trim}]{\setlength{\rightskip}{0pt plus 5cm}char$\ast$ trim (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{s}
+\end{DoxyParamCaption}
+)}}\label{trim_8c_a8bd9dd70049fb4e00071d0d73bb8d2a0}
+Strip whitespace from the beginning and end of a string 
+
+Definition at line 54 of file trim.\-c.
+

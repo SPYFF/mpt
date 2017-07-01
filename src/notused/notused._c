@@ -1,0 +1,784 @@
+
+/// Data structure of physical interface
+// typedef struct interface_struct
+// {
+//     char   name[128];        ///< The name of the interface
+//     bit_32 ip4;              ///< The IPv4 address
+//    bit_8  ip4len;           ///< The IPv4 prefix length
+//     bit_32 ip6[4];           ///< The IPv6 address
+//     bit_8  ip6len;           ///< The IPv6 prefix length
+//     bit_32 mac_local[2];     ///< The MAC address
+//     bit_32 ip4_gw;           ///< The IPv4 address of the gateway
+//     bit_32 ip6_gw[4];        ///< The IPv6 address of the gateway
+//     bit_32 mac_gw[2];        ///< The MAC address of the gateway
+// } interface_type;
+
+
+
+//*****************************************************************************
+// ************** Do the command received from the loopback interface *********
+//*****************************************************************************
+#if 0
+// NOT USED, new version at cli.c
+int do_local_cmd(char * buff)
+{
+    int i, n, blen, plen, af;
+    char instr[2048], cmdstr[256], bstr[256], *ipstr, *tstr;
+    char *ch, *argv[50];
+    char delim[] = " \t\n";
+    bit_32 addr[4];
+
+// printf("%s\n", buff);
+    strcpy(instr, buff);
+    trim(instr);
+    blen = strlen(instr);
+    if (!blen) return(0);
+    argv[0] = strtok(instr, delim);
+    n=1;
+    while (argv[n-1] != NULL && n< 50) {
+// printf("%d, argv:%s\n", n-1, argv[n-1]);
+        argv[n] = strtok(NULL, delim);
+        n++;
+    }
+    n--; // The input is tokenized
+
+    ch = argv[0]; // interface ethx up|down
+    if (strcmp(ch, "int")==0 || strcmp(ch, "interface")==0) {
+        if (n != 3) return(0);
+        ch = argv[2];
+        if (strcmp(ch, "up")==0 || strcmp(ch, "down")==0) {
+            if (strcmp(ch, "down")==0) {
+                interface_change_status(argv[1], STAT_IF_DOWN);
+                sprintf(cmdstr, "bin/mpt_int_updown.sh %s down", argv[1]);
+            }
+            else {
+                sprintf(cmdstr, "bin/mpt_int_updown.sh %s up", argv[1]);
+                interface_change_status(argv[1], STAT_OK);
+            }
+            system(cmdstr);
+            return(1);
+        }
+        else
+            return(0);
+    }
+
+    ch = argv[0]; // address add|del ip_addr [dev ethx]
+    if (strcmp(ch, "address")==0 || strcmp(ch, "addr")==0) {
+        if (n != 3 && n != 5) return(0);
+//    printf("Address\n");
+        af = AF_INET; plen = 24;
+        for (i=0; i<strlen(argv[2]); i++ )
+            if (argv[2][i] == ':') {af = AF_INET6; plen = 64;}
+        strcpy(bstr, argv[2]);
+        ipstr = strtok(bstr, "/");
+        if (strcmp(ipstr, argv[2])!=0) {
+            tstr = strtok(NULL, "/");
+            plen = atoi(tstr);
+        }
+
+        if (af == AF_INET) {
+            sprintf(cmdstr, "::FFFF:%s", ipstr);
+            inet_pton(AF_INET6, cmdstr, (char *)addr);
+        } else inet_pton(AF_INET6, ipstr, addr);
+        if (n ==5 && strcmp(argv[3], "dev") != 0) return(0);
+        ch = argv[1];
+//   printf("Address start:%s\n", ch);
+        if (strcmp(ch, "down")==0 || strcmp(ch, "del")==0 || strcmp(ch, "add")==0 || strcmp(ch, "up")==0) {
+            if (strcmp(ch, "down")==0  || strcmp(ch, "del")==0 ) {
+                address_change_status(addr, STAT_ADDRESS_DOWN);
+                if (n == 5) sprintf(cmdstr, "bin/mpt_addr_adddel.sh del %s/%d %s ", ipstr, plen, argv[4]);
+            }
+            else {
+                if (n == 5) sprintf(cmdstr, "bin/mpt_addr_adddel.sh add %s/%d %s", ipstr, plen, argv[4]);
+                address_change_status(addr, STAT_OK);
+            }
+            if (n == 5) system(cmdstr);
+            return(1);
+        }
+        else
+            return(0);
+    }
+
+    return(0);
+}
+#endif
+
+
+
+/**
+ * Reload all connections' config from a specified file
+ *
+ * @param filename    The filename which contains the connections
+ * @return The same as conn_diff()
+ */
+int _conn_reload(char *filename)
+{
+    connection_type conn;
+    FILE *fd;
+    char line[256]; // char *lstr;
+    int changed = 0;
+
+    chdir("conf/connections");
+    fd = fopen(filename, "r");
+    chdir("../..");
+    if (fd == NULL) {
+	sprintf(line, "\nFile read open error: %s\n", filename);
+	reterror(line, 3)
+    }
+
+    memset(&conn, 0, sizeof(connection_type));
+    strcpy(conn.filename, filename);
+    conn_parser(&conn);
+
+    changed |= conn_activate(&conn, 1);
+    fclose(fd);
+
+    return changed;
+}
+
+/**
+ * Reload all connections from the configuration directory
+ * @return The same as conn_diff()
+ */
+int _conn_reload_dir()
+{
+    DIR *dp;
+    struct dirent *ep;
+    int changed = 0;
+
+    // read dir
+    dp = opendir("conf/connections");
+    if (!dp) {
+	fprintf(stderr, "Failed to open directory");
+	return -1;
+    }
+
+    while ((ep = readdir(dp))) {
+	// open only .conf files
+	if (strlen(ep->d_name) < 5
+	    || strcmp(ep->d_name + strlen(ep->d_name) - 5, ".conf") != 0)
+	    continue;
+
+	// reload config file
+	changed |= _conn_reload(ep->d_name);
+
+	// find deleted connections
+	// torles lehet connection_status -al
+	// lehet kulon torles parancs
+	// automatikusan nem torlodik
+	// disablednel atnevezzuk a .conf -ot .disabled -re
+    }
+    closedir(dp);
+
+    return changed;
+}
+
+
+void _setup_interface(dictionary * conf, char *section,
+		      interface_type * inf)
+{
+    char conf_key[128];
+    char *read_str;
+    char *lstr;
+    char ipstr[255];
+    char cmdbuf[255];
+
+    sprintf(conf_key, "%s:name", section);
+    read_str = iniparser_getstring(conf, conf_key, "eth0");
+    strcpy(inf->name, read_str);
+
+    sprintf(conf_key, "%s:ipv4_addr", section);
+    read_str = iniparser_getstring(conf, conf_key, "0.0.0.0/0");
+    lstr = trim((char *) strtok(read_str, "/#\n"));
+    inet_pton(AF_INET, lstr, &inf->ip4);
+    lstr = trim((char *) strtok(NULL, "/#\n"));
+    inf->ip4len = atoi(lstr);
+    if (inf->ip4len) {
+	inet_ntop(AF_INET, &inf->ip4, ipstr, 255);
+	sprintf(cmdbuf, "bin/mpt_addr_adddel.sh add %s/%d %s", ipstr,
+		inf->ip4len, inf->name);
+	printf("Executing: %s\n", cmdbuf);
+	system(cmdbuf);
+    }
+
+    sprintf(conf_key, "%s:ipv6_addr", section);
+    read_str = iniparser_getstring(conf, conf_key, "::/0");
+    lstr = trim((char *) strtok(read_str, "/#\n"));
+    inet_pton(AF_INET6, lstr, &inf->ip6);
+    lstr = trim((char *) strtok(NULL, "/#\n"));
+    inf->ip6len = atoi(lstr);
+    if (inf->ip6len) {
+	inet_ntop(AF_INET6, &inf->ip6, ipstr, 255);
+	sprintf(cmdbuf, "bin/mpt_addr_adddel.sh change %s/%d %s", ipstr,
+		inf->ip6len, inf->name);
+	printf("Executing: %s\n", cmdbuf);
+	system(cmdbuf);
+    }
+}
+
+
+
+// function getglobalip4
+// Determines the global ip address of an interface (maybe behind a NAT-Box)
+// Params:
+//      globalip: The output string, containing the global IP address
+//      intname: The name of the interface, for which the global IP address must be determined (can be NULL)
+//      gateway: String containing the gateway to use (can be NULL)
+// Returns: 1 on sucess, 0 otherwise
+int wgetglobalip4(char *globalip, char *intname, char *gateway) { //http get
+
+    void removechar(char *str, char c) {
+        char *pr = str, *pw = str;
+        while (*pr) {
+            while (*pr == c) pr++;
+            *pw = *pr;
+            pw++;
+            pr++;
+        }
+        *pw = '\0';
+    }
+
+    struct sockaddr_in6 peer;
+    struct addrinfo hints;
+    struct addrinfo *result, *rp;
+    int sfd, s, glen, ret;
+    char buf[2000], cmd[200];
+
+#define GETSTR "GET /plain HTTP/1.1\nUser-Agent: Wget/1.15 (linux-gnu)\nAccept: */*\nHost: ipecho.net\nConnection: Keep-Alive\n\n\n"
+
+    ret = 0;
+DEBUG("Starting globl IP address reading from ipecho.net (interface: %s )\n", intname);
+   /* Obtain address(es) matching host/port */
+    memset(&hints, 0, sizeof(struct addrinfo));
+    hints.ai_family = AF_INET;    /* Using AF_UNSPEC will allow IPv4 or IPv6 */
+    hints.ai_socktype = SOCK_STREAM; /* Datagram socket */
+    hints.ai_flags = 0;
+    hints.ai_protocol = 0;          /* Any protocol */
+
+    s = getaddrinfo("ipecho.net", "80", &hints, &result);
+    if (s != 0) {
+        printf("Can not obtain address for ipecho.net host. Global address can not be determined!\n");
+        return 0;
+    }
+
+   /* getaddrinfo() returns a list of address structures.
+       Try each address until we successfully connect(2).
+       If socket(2) (or connect(2)) fails, we (close the socket
+       and) try the next address. */
+
+   if (gateway) { sprintf(cmd, "route add -host ipecho.net gw %s ", gateway); system(cmd);}
+   for (rp = result; rp != NULL; rp = rp->ai_next) {
+        sfd = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
+        if (sfd == -1)
+            continue;
+//DEBUG("Before setsockopt\n");
+       if (intname) setsockopt(sfd, SOL_SOCKET, SO_BINDTODEVICE, intname, strlen(intname) );
+//DEBUG("Before connect\n");
+        //set the socket in non-blocking
+        fcntl(sfd, F_SETFL, O_NONBLOCK);
+        connect(sfd, rp->ai_addr, rp->ai_addrlen);
+        usleep(5000000);
+        fcntl(sfd, F_SETFL, 0);
+        if (!getpeername(sfd, (struct sockaddr *)&peer, (socklen_t *)&glen))
+            break;                  /* Success */
+
+//DEBUG("After connect\n");
+       close(sfd);
+    }
+
+   if (rp == NULL) {               /* No address succeeded */
+        printf("Could not connect to ipecho,net (interface: %s)\n", intname);
+        ret = 0;
+        goto ROUTE_DEL ;
+    }
+
+   freeaddrinfo(result);           /* No longer needed */
+   strcpy(buf, GETSTR);
+//DEBUG("Before send\n");
+   send(sfd, buf, strlen(buf), 0);
+
+   struct timeval tv;
+   memset(&tv, 0, sizeof(tv));     // set socket timeout
+   tv.tv_sec = 15; // 15 sec
+   setsockopt(sfd, SOL_SOCKET, SO_RCVTIMEO, (char*)&tv, sizeof(tv));
+   memset(buf, 0, sizeof(buf));
+//DEBUG("Before recv\n");
+   glen = recv(sfd, buf, 2000, 0);
+   close(sfd);
+
+   if (glen > 0) {
+         char *ips, *ipe;
+         ips = NULL; ipe = NULL;
+         removechar(buf, '\r');
+         ips = strstr(buf, "\n\n");
+         if (ips) ipe = strstr(ips, "\n0\n");
+         if (ipe) {
+               *ipe = '\0';
+               if (strlen (ips)>5) {
+                    ips += 4;
+                    if (globalip) strcpy(globalip, ips);
+                    DEBUG("Global IP (interface:%s): #%s#\n", intname, ips);
+                    ret = 1;
+                    goto ROUTE_DEL;
+               }
+         } // if ipe
+   }  // if glen > 0
+
+   printf("No IP address got from ipecho.net (interface: %s)\n", intname);
+   DEBUG("\n%s\n", buf);
+ROUTE_DEL:
+   if (gateway) { sprintf(cmd, "route del -host ipecho.net gw %s ", gateway); system(cmd);}
+   return ret;
+
+}
+
+
+/**
+ * Send data about a connection to its remote peer
+ *
+ * @param       conn    The connection which should be sent
+ * @return Returns 0 on successful communication
+ */
+int replicate_connection(connection_type *conn)
+{
+    path_type *path;
+    int gind, size;
+    char lipstr[128];
+    char * cmdbuf;
+
+    // exit if no connection
+    if(!conn) return 0;
+
+    // exit if no permission to send
+    if(!(conn->permission & PERM_SEND)) return 0;
+
+    path = &(conn->mpath[0]);
+    gind=0;
+    while ((gind<MAX_PATH) && (path[gind].status != STAT_OK))  gind++;
+
+    if (gind>= MAX_PATH) {
+        sprintf(lipstr, "All path down for connection %s ", conn->name);
+        reterror(lipstr, -1);
+    }
+
+    // ********* gind contains the index of the usable path
+
+    /// @todo create compact/packed data, don't send the full connection_type struct with empty spaces
+    size = sizeof(connection_type);
+    cmdbuf = (char*)malloc(size);
+    memcpy(cmdbuf, conn, size);     // May create a well packed message format
+    handshake(conn, gind, CMD_CONNECTION_SEND, 0, &size, cmdbuf);
+    /// @todo use port number received from remote
+
+    return 0;
+}
+
+
+/**
+ * Copy changes from a new temporary connection to the existing
+ * @param old   The existing connection, destination
+ * @param new   The new connection, the source
+ * @return Returns with 0, if nothing changed.
+ */
+int conn_diff(connection_type * old, connection_type * new)
+{
+    int changed = 0;
+    int i, j;
+
+    if (strcmp(old->name, new->name) != 0) {
+	strcpy(old->name, new->name);
+	changed |= 1;
+	printf("name\n");
+    }
+    // Needed by conn_save()
+    if (strcmp(old->filename, new->filename) != 0) {
+	strcpy(old->filename, new->filename);
+	changed |= 1;
+	printf("filename\n");
+    }
+
+    if (old->port_local != new->port_local) {
+	//conn_stop(old);
+	old->port_local = new->port_local;
+	//conn_start(old);
+	changed |= 1;
+	printf("port local\n");
+    }
+    if (old->port_remote != new->port_remote) {
+	old->port_remote = new->port_remote;
+	changed |= 2;		// rebuild peer
+	printf("port remote\n");
+    }
+    if (old->cmd_port_remote != new->cmd_port_remote) {
+	// need to delete old connection
+	old->cmd_port_remote = new->cmd_port_remote;
+	changed |= 1;
+	printf("cmd port\n");
+    }
+
+    if (old->auth_type != new->auth_type) {
+	// not implemented
+	old->auth_type = new->auth_type;
+	changed |= 1;
+	printf("auth type\n");
+    }
+    if (strcmp(old->auth_key, new->auth_key) != 0) {
+	// not implemented
+	strncpy(old->auth_key, new->auth_key, 128);
+	changed |= 1;
+	printf("auth key\n");
+    }
+
+    if (old->reorder_window != new->reorder_window) {
+	// didn't used
+	old->reorder_window = new->reorder_window;
+	changed |= 1;
+	printf("reorder window\n");
+    }
+
+    if (old->status != new->status) {
+	// didn't used
+	old->status = new->status;
+	changed |= 1;
+	printf("status\n");
+    }
+
+
+    if (old->permission != new->permission) {
+	old->permission = new->permission;
+	changed |= 1;
+	printf("permission\n");
+    }
+
+    // add or change
+    for (i = 0; i < new->path_count; i++) {
+	for (j = 0; j < old->path_count; j++) {
+	    // matching by keys ip_local, ip_remote, ip_version
+	    if (old->mpath[j].ip_version == 4) {
+		if (old->mpath[j].ip_version == new->mpath[i].ip_version
+		    && old->mpath[j].ip_public[3] ==
+		    new->mpath[i].ip_public[3]
+		    && old->mpath[j].ip_remote[3] ==
+		    new->mpath[i].ip_remote[3])
+		    break;
+	    } else {
+		if (old->mpath[j].ip_version == new->mpath[i].ip_version
+		    && !memcmp(old->mpath[j].ip_public,
+			       new->mpath[i].ip_public, SIZE_IN6ADDR)
+		    && !memcmp(old->mpath[j].ip_remote,
+			       new->mpath[i].ip_remote, SIZE_IN6ADDR))
+		    break;
+	    }
+	}
+	if (j < old->path_count) {
+	    // check for changes
+	    //  header[] ujrageneralas?
+        bit_32 null_gw[4];
+        memset(null_gw, 0, sizeof(null_gw));
+
+
+        if(memcmp(null_gw, new->mpath[i].ip_gw, sizeof(null_gw))) {
+            if (memcmp
+            (old->mpath[j].ip_gw, new->mpath[i].ip_gw,
+             sizeof(old->mpath[j].ip_gw))) {
+                memcpy(old->mpath[j].ip_gw, new->mpath[i].ip_gw,
+                       sizeof(old->mpath[j].ip_gw));
+                changed |= 1;
+                printf("ip_gw\n");
+            }
+        }
+
+//	    if (memcmp
+//		(old->mpath[j].mac_local, new->mpath[i].mac_local,
+//		 sizeof(old->mpath[j].mac_local))) {
+//		memcpy(old->mpath[j].mac_local, new->mpath[i].mac_local,
+//		       sizeof(old->mpath[j].mac_local));
+//		changed |= 1;
+//		printf("mac_local\n");
+//	    }
+
+//	    if (memcmp
+//		(old->mpath[j].mac_gw, new->mpath[i].mac_gw,
+//		 sizeof(old->mpath[j].mac_gw))) {
+//		memcpy(old->mpath[j].mac_gw, new->mpath[i].mac_gw,
+//		       sizeof(old->mpath[j].mac_gw));
+//		changed |= 1;
+//		printf("mac_gw\n");
+//	    }
+
+       if(old->mpath[j].packet_max != new->mpath[i].packet_max) {
+       old->mpath[j].packet_max = new->mpath[i].packet_max;
+       changed |= 4;    // Az osszes path kell, utana lehet ujraszamolni
+       printf("packet_max\n");
+       }
+
+	    if (old->mpath[j].weight_in != new->mpath[i].weight_in) {
+		old->mpath[j].weight_in = new->mpath[i].weight_in;
+		changed |= 4;
+		printf("weight_in\n");
+	    }
+	    if (old->mpath[j].weight_out != new->mpath[i].weight_out) {
+		old->mpath[j].weight_out = new->mpath[i].weight_out;
+		changed |= 4;
+		printf("weight_out\n");
+	    }
+        if (old->mpath[j].keepalive != new->mpath[i].keepalive) {
+        old->mpath[j].keepalive = new->mpath[i].keepalive;
+        changed |= 1;
+        printf("keepalive\n");
+        }
+
+        if (old->mpath[j].deadtimer != new->mpath[i].deadtimer) {
+        old->mpath[j].deadtimer = new->mpath[i].deadtimer;
+        changed |= 1;
+        printf("deadtimer\n");
+	}
+
+	    // locking for critical changes
+	    mpt_lock;
+	    if (old->mpath[j].status != new->mpath[i].status) {
+		//path_change_status(old, j, new->mpath[i].status);
+		changed |= 1;
+		printf("status\n");
+	    }
+	    if (strcmp(old->mpath[j].interface, new->mpath[i].interface)) {
+		//interface_change_status(old->mpath[j].interface, STAT_IF_DOWN);
+		strncpy(old->mpath[j].interface, new->mpath[i].interface,
+			128);
+		// //interface_change_status(old->mpath[j].interface, STAT_OK); // tunnel_read_pthread megcsinalja
+		changed |= 1;
+		printf("interface\n");
+	    }
+	    mpt_unlock;
+	} else {
+	    // add new path
+	    // kommunikacio a tuloldallal, hogy o is vegye fel a patht
+	    // amig nem nyugtazta, addig legyen downban
+	    int oldstatus = old->mpath[j].status;
+
+	    mpt_lock;
+
+	    memcpy(&(old->mpath[j]), &(new->mpath[i]), sizeof(path_type));
+	    old->mpath[j].status = oldstatus;	// keep status
+	    old->path_count++;
+
+	    mpt_unlock;
+
+	    path_change_status(old, j, new->mpath[i].status);	// change status with path_change_status()
+
+	    changed |= 1;
+	    printf("add\n");
+	}
+    }
+
+    // remove path
+    // itt elobb path_change_status es utana lehet torolni, a tuloldalit is le kell kommunikalni
+    for (i = 0; i < old->path_count; i++) {
+	for (j = 0; j < new->path_count; j++) {
+	    if (old->mpath[i].ip_version == 4) {
+		if (old->mpath[i].ip_version == new->mpath[j].ip_version
+		    && old->mpath[i].ip_public[3] ==
+		    new->mpath[j].ip_public[3]
+		    && old->mpath[i].ip_remote[3] ==
+		    new->mpath[j].ip_remote[3])
+		    break;
+	    } else {
+		if (old->mpath[i].ip_version == new->mpath[j].ip_version
+		    && !memcmp(old->mpath[i].ip_public,
+			       new->mpath[j].ip_public, SIZE_IN6ADDR)
+		    && !memcmp(old->mpath[i].ip_remote,
+			       new->mpath[j].ip_remote, SIZE_IN6ADDR))
+		    break;
+	    }
+	}
+	if (j == new->path_count) {
+	    mpt_lock;
+
+	    // make path inactive
+	    path_change_status(old, i, STAT_PATH_DOWN);
+
+	    for (j = i + 1; j < old->path_count; j++) {
+		memcpy(&(old->mpath[j - 1]), &(old->mpath[j]),
+		       sizeof(path_type));
+		if (old->path_index > 0 && old->path_index == j)
+		    old->path_index--;
+	    }
+	    old->path_count--;
+	    changed |= 1;
+	    printf("del\n");
+
+	    mpt_unlock;
+
+	    // next element is now reachable on the same place
+	    i--;
+	}
+    }
+
+    if (changed & 2) {
+	mpt_lock;
+	for (i = 0; i < old->path_count; i++) {
+	    old->mpath[i].peer.sin6_port = htons(old->port_remote);
+	}
+	mpt_unlock;
+	printf("peer\n");
+    }
+    return changed;
+}
+
+/**
+ * Setup new or modify existing connection
+ *
+ * @param conn          The connection needed to add
+ * @param replicate     If set to 1, than send this connection to the remote peer
+ * @return Returns 0 if the connection is new or the same as conn_diff() if the connection is changed
+ */
+int conn_activate(connection_type * conn, int replicate)
+{
+    connection_type *cp;
+    int i, changed = 0;
+
+    // find connection
+    if (conn->ip_version == 4) {
+	cp = conn_search_ip(conn->ip_version, &(conn->ip_local[3]),
+			    &(conn->ip_remote[3]), mp_global_conn);
+    } else {
+	cp = conn_search_ip(conn->ip_version, conn->ip_local,
+			    conn->ip_remote, mp_global_conn);
+    }
+
+    if (cp) {
+	// connection changes
+	if ((i = conn_diff(cp, conn))) {
+	    char lipstr[128], ripstr[128];
+        set_ipstr(lipstr, cp->ip_local, cp->ip_version);
+        set_ipstr(ripstr, cp->ip_remote, cp->ip_version);
+
+	    printf("Connection changed: %s - %s:%i <=> %s:%i\n",
+		   cp->filename, lipstr, cp->port_local, ripstr,
+		   cp->port_remote);
+	    changed |= i;
+
+	    // send changes to remote peer
+	    if (replicate)
+		replicate_connection(cp);
+	}
+    } else {
+	char lipstr[128], ripstr[128];
+
+	// new connection
+	connection_type *new =
+	    (connection_type *) malloc(sizeof(connection_type));
+	memcpy(new, conn, sizeof(connection_type));
+
+    set_ipstr(lipstr, conn->ip_local, conn->ip_version);
+    set_ipstr(ripstr, conn->ip_remote, conn->ip_version);
+
+	printf("Connection added: %s - (%i) %s:%i <=> %s:%i\n",
+	       new->filename, new->ip_version, lipstr, new->port_local,
+	       ripstr, new->port_remote);
+
+	// add to linked list
+	cp = mp_global_conn;
+	if (cp) {
+	    while (cp->next != NULL)
+		cp = cp->next;
+	    cp->next = new;
+	    new->prev = cp;
+	} else {
+	    cp = mp_global_conn = new;
+	}
+
+	// apply changes
+	connection_start(new);
+
+	// apply changes on remote peer
+	if (replicate)
+	    replicate_connection(new);
+    }
+
+    return changed;
+}
+
+
+
+/**
+ * Create a suitable connection for the local side from the remote configuration
+ *
+ * @param dst   The destination of the new configuration
+ * @param src   The configuration received from the remote host
+ */
+void conn_mirror(connection_type * dst, connection_type * src)
+{
+    int i;
+
+    // copy some settings
+    memcpy(&dst->name, src->name, sizeof(src->name));
+    strcpy(dst->filename, src->filename);
+		//smaller path count win
+    dst->path_count = src->path_count < dst->path_count ? src->path_count : dst->path_count;
+    dst->status = src->status;
+    dst->ip_version = src->ip_version;
+    dst->auth_type = src->auth_type;
+    memcpy(&dst->auth_key, &src->auth_key, keySize(src->auth_type));
+
+    // swap remote and local infos
+    memcpy(dst->ip_local, src->ip_remote, SIZE_IN6ADDR);
+    memcpy(dst->ip_remote, src->ip_local, SIZE_IN6ADDR);
+    dst->port_local = src->port_remote;	/// @todo search new unused port and send it back to the client
+    dst->port_remote = src->port_local;
+    dst->cmd_port_remote = tun.cmd_port_rcv;
+    dst->permission = 0;
+    dst->permission |= (src->permission & 2) >> 1;	// receive -> send on other side
+    dst->permission |= (src->permission & 1) << 1;	// send -> receive on other side
+
+    // need to generate after receiving
+    //socket (conn_start?)
+    //socket_raw
+    //socket_read
+    //path.mac_local
+    //path.mac_gw
+    //path.ip_gw
+    //path.header
+
+    // windows sizet ki kene szamolni
+
+    for (i = 0; i < dst->path_count; i++) {
+	memcpy(dst->mpath[i].ip_public, src->mpath[i].ip_remote,
+	       SIZE_IN6ADDR);
+	memcpy(dst->mpath[i].ip_remote, src->mpath[i].ip_public,
+	       SIZE_IN6ADDR);
+	dst->mpath[i].status = src->mpath[i].status;
+	dst->mpath[i].ip_version = src->mpath[i].ip_version;
+	dst->mpath[i].weight_in = src->mpath[i].weight_out;	// only symmetric connections
+	dst->mpath[i].weight_out = src->mpath[i].weight_in;
+    dst->mpath[i].keepalive = src->mpath[i].keepalive;
+    dst->mpath[i].deadtimer = src->mpath[i].deadtimer;
+    dst->mpath[i].packet_max = src->mpath[i].packet_max;
+
+	// set peer
+	dst->mpath[i].peer.sin6_family = AF_INET6;
+	dst->mpath[i].peer.sin6_port = htons(dst->port_remote);
+	memcpy(&dst->mpath[i].peer.sin6_addr, dst->mpath[i].ip_remote,
+	       SIZE_IN6ADDR);
+	memcpy(&dst->mpath[i].peer_cmd, &dst->mpath[i].peer,
+	       sizeof(dst->mpath[i].peer));
+	dst->mpath[i].peer_cmd.sin6_port = htons(dst->cmd_port_remote);
+	// find interface -- the interface may not change
+	//for (j = 0; j < MAX_INTNUM; j++) {
+	//    if (strlen(eth[j].name) == 0)
+	//  	break;
+    //    if ((dst->mpath[i].ip_version == 4
+	//  	 && dst->mpath[i].ip_public[3] == eth[j].ip4)
+	//  	|| (dst->mpath[i].ip_version == 6
+	//  	    && !memcmp(dst->mpath[i].ip_public, eth[j].ip6,
+	//		       SIZE_IN6ADDR))) {
+	//	strncpy(dst->mpath[i].interface, eth[j].name, 128);
+	//    }
+	// }
+    }
+
+    /* Not yet implemented */
+    //calculate_weights(dst);
+}
+
+

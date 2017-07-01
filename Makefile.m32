@@ -1,0 +1,69 @@
+SHELL=/bin/bash
+SUBDIRS=src
+CLEANDIRS=$(SUBDIRS:%=clean-%)
+
+TARGETDIR ?= .
+VER = $(date +"%F")
+
+.PHONY: subdirs $(SUBDIRS)
+.PHONY: clean
+
+subdirs: $(SUBDIRS)
+
+$(SUBDIRS):
+	@echo "  Chosen architecture: m32"
+	@$(MAKE) -C $@ -f Makefile.m32
+
+clean: $(CLEANDIRS)
+	find . -name "*~" -delete 
+
+$(CLEANDIRS):
+	@$(MAKE) -C $(@:clean-%=%) -f Makefile.m32 clean
+
+pack: subdirs pack-clean pack-src pack-lib
+
+pack-src: subdirs
+	@echo "  BUILD source package"
+	@tar vczf $(TARGETDIR)/mpt-gre-src-$(VER).tar.gz \
+	    -C .. \
+	    --exclude-vcs \
+	    --exclude "*.o" \
+	    --exclude "*.a" \
+	    --exclude "usermanual-*" \
+	    --exclude "*.docx" \
+	    mpt/bin/ \
+	    mpt/conf/ \
+	    mpt/doc/ \
+	    mpt/src/ \
+	    mpt/nat_conf/ \
+	    mpt/Makefile \
+	    mpt/Makefile.m32 \
+	    mpt/Makefile.m64
+
+pack-lib: subdirs
+	@echo "  BUILD library package"
+	@mv Makefile Makefile.tmp
+	@cp Makefile.m32 Makefile
+	@test ! -e $(TARGETDIR)/mpt -o ! -e $(TARGETDIR)/mptsrv || \
+	    tar czf $(TARGETDIR)/mpt-gre-lib32-$(VER).tar.gz \
+		-C .. \
+		--exclude-vcs \
+		--exclude "*.o" \
+		--exclude "usermanual-*" \
+		--exclude "*.docx" \
+		mpt/bin/ \
+		mpt/conf/ \
+		mpt/doc/usermanual/ \
+		mpt/src/mpt/ \
+		mpt/src/mptsrv/ \
+		mpt/src/include/ \
+		mpt/src/Makefile \
+		mpt/src/Makefile.m32 \
+		mpt/src/Makefile.m64 \
+		mpt/Makefile \
+		mpt/mpt \
+		mpt/mptsrv
+	@mv Makefile.tmp Makefile
+
+pack-clean:
+	rm $(TARGETDIR)/mpt-*.tar.gz || true

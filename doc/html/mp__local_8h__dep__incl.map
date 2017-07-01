@@ -1,0 +1,11 @@
+<map id="/Users/kiskele/Dropbox/suli/mptcp/source/src/include/mp_local.h" name="/Users/kiskele/Dropbox/suli/mptcp/source/src/include/mp_local.h">
+<area shape="rect" id="node3" href="$auth_8c.html" title="Authentication and encryption functions. " alt="" coords="5,109,168,165"/>
+<area shape="rect" id="node5" href="$cli_8c.html" title="This file is used to check CLI commands and their parameters. " alt="" coords="192,109,355,165"/>
+<area shape="rect" id="node7" href="$command_8c.html" title="Handling of network commands. " alt="" coords="379,109,541,165"/>
+<area shape="rect" id="node9" href="$connection_8c.html" title="Basic operations on a connection. " alt="" coords="565,109,728,165"/>
+<area shape="rect" id="node11" href="$inout_8c.html" title="Screen and file input/output routines. " alt="" coords="752,109,915,165"/>
+<area shape="rect" id="node13" href="$interface_8c.html" title="Basic operations on an interface. " alt="" coords="939,109,1101,165"/>
+<area shape="rect" id="node15" href="$thread_8c.html" title="Thread handle functions. " alt="" coords="1125,109,1288,165"/>
+<area shape="rect" id="node17" href="$tunnel_8c.html" title="Tunnel handling functions. " alt="" coords="1312,109,1475,165"/>
+<area shape="rect" id="node19" href="$main_8c.html" title="Main code of the server application. " alt="" coords="1499,109,1661,165"/>
+</map>

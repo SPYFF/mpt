@@ -1,0 +1,15 @@
+SUBDIRS=$(wildcard */)
+CLEANDIRS=$(SUBDIRS:%=clean-%)
+
+.PHONY: subdirs $(SUBDIRS)
+.PHONY: clean
+
+subdirs: $(SUBDIRS)
+
+$(SUBDIRS):
+	@$(MAKE) -C $@ -f Makefile.m64
+
+clean: $(CLEANDIRS)
+
+$(CLEANDIRS):
+	@$(MAKE) -C $(@:clean-%=%) -f Makefile.m64 clean

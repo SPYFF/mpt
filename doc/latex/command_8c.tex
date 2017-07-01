@@ -1,0 +1,193 @@
+\hypertarget{command_8c}{\section{/\-Users/kiskele/\-Dropbox/suli/mptcp/source/src/mptlib/command.c File Reference}
+\label{command_8c}\index{/\-Users/kiskele/\-Dropbox/suli/mptcp/source/src/mptlib/command.\-c@{/\-Users/kiskele/\-Dropbox/suli/mptcp/source/src/mptlib/command.\-c}}
+}
+
+
+Handling of network commands.  
+
+
+{\ttfamily \#include \char`\"{}multipath.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}mp\-\_\-local.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}auth.\-h\char`\"{}}\\*
+Include dependency graph for command.\-c\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{command_8c__incl}
+\end{center}
+\end{figure}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{command_8c_a1a19638dfd31c7a5d16fcdf6a99fec22}{do\-\_\-command} (\hyperlink{multipath_8h_a8fd58c5c9a4f2463735bc00b930e3b05}{connection\-\_\-type} $\ast$conn, char $\ast$buff, int $\ast$blen)
+\item 
+int \hyperlink{command_8c_a2b55e4dc17dc3eb947023297f2043dce}{handshake} (\hyperlink{multipath_8h_a8fd58c5c9a4f2463735bc00b930e3b05}{connection\-\_\-type} $\ast$conn, int pind, char cmd, char status, int $\ast$size, char $\ast$buff)
+\item 
+int \hyperlink{command_8c_a94cc0db48e2e582aee04791f7e57581d}{path\-\_\-change\-\_\-status} (\hyperlink{multipath_8h_a8fd58c5c9a4f2463735bc00b930e3b05}{connection\-\_\-type} $\ast$conn, int pind, bit\-\_\-8 lstatus)
+\item 
+int \hyperlink{command_8c_ab2b8fd2c85bbe180c1b53a5c2318b89b}{replicate\-\_\-connection} (\hyperlink{multipath_8h_a8fd58c5c9a4f2463735bc00b930e3b05}{connection\-\_\-type} $\ast$conn)
+\item 
+int \hyperlink{command_8c_a13ab7af37efc79dd5791960a0bd63bbe}{getcmd} (int sock, char $\ast$buff, int blen, int flags, struct sockaddr $\ast$saddr, unsigned int $\ast$ssize)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Handling of network commands. \begin{DoxyDate}{Date}
+2012.\-08.\-15 
+\end{DoxyDate}
+\begin{DoxyAuthor}{Author}
+Almasi, Bela; Debrecen, Hungary 
+\end{DoxyAuthor}
+\begin{DoxyCopyright}{Copyright}
+Project maintained by Almasi, Bela; Debrecen, Hungary 
+\end{DoxyCopyright}
+
+
+Definition in file \hyperlink{command_8c_source}{command.\-c}.
+
+
+
+\subsection{Function Documentation}
+\hypertarget{command_8c_a1a19638dfd31c7a5d16fcdf6a99fec22}{\index{command.\-c@{command.\-c}!do\-\_\-command@{do\-\_\-command}}
+\index{do\-\_\-command@{do\-\_\-command}!command.c@{command.\-c}}
+\subsubsection[{do\-\_\-command}]{\setlength{\rightskip}{0pt plus 5cm}int do\-\_\-command (
+\begin{DoxyParamCaption}
+\item[{{\bf connection\-\_\-type} $\ast$}]{conn, }
+\item[{char $\ast$}]{buff, }
+\item[{int $\ast$}]{blen}
+\end{DoxyParamCaption}
+)}}\label{command_8c_a1a19638dfd31c7a5d16fcdf6a99fec22}
+Do the command received from the network peer. This is used in \hyperlink{mp__local_8h_a658a78986397ef5b54cb5344e5ffa160}{cmd\-\_\-read\-\_\-thread()}
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em conn} & The connection of the network peer \\
+\hline
+\mbox{\tt in,out}  & {\em buff} & Contains the message received. After execution, it will contain the response message \\
+\hline
+\mbox{\tt in,out}  & {\em blen} & The size of the buff param \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Returns with 1 if need to send response to the message 
+\end{DoxyReturn}
+
+
+Definition at line 110 of file command.\-c.
+
+\hypertarget{command_8c_a13ab7af37efc79dd5791960a0bd63bbe}{\index{command.\-c@{command.\-c}!getcmd@{getcmd}}
+\index{getcmd@{getcmd}!command.c@{command.\-c}}
+\subsubsection[{getcmd}]{\setlength{\rightskip}{0pt plus 5cm}int getcmd (
+\begin{DoxyParamCaption}
+\item[{int}]{sock, }
+\item[{char $\ast$}]{buff, }
+\item[{int}]{blen, }
+\item[{int}]{flags, }
+\item[{struct sockaddr $\ast$}]{saddr, }
+\item[{unsigned int $\ast$}]{ssize}
+\end{DoxyParamCaption}
+)}}\label{command_8c_a13ab7af37efc79dd5791960a0bd63bbe}
+Receive from the peer with 100 ms timeout value. The parameters are the same as recvfrom()
+
+\begin{DoxyReturn}{Returns}
+Returns with the number of received bytes or with -\/1 on errors. 
+\end{DoxyReturn}
+
+
+Definition at line 392 of file command.\-c.
+
+\hypertarget{command_8c_a2b55e4dc17dc3eb947023297f2043dce}{\index{command.\-c@{command.\-c}!handshake@{handshake}}
+\index{handshake@{handshake}!command.c@{command.\-c}}
+\subsubsection[{handshake}]{\setlength{\rightskip}{0pt plus 5cm}int handshake (
+\begin{DoxyParamCaption}
+\item[{{\bf connection\-\_\-type} $\ast$}]{conn, }
+\item[{int}]{pind, }
+\item[{char}]{cmd, }
+\item[{char}]{status, }
+\item[{int $\ast$}]{size, }
+\item[{char $\ast$}]{buff}
+\end{DoxyParamCaption}
+)}}\label{command_8c_a2b55e4dc17dc3eb947023297f2043dce}
+Common communication function implementing four-\/way handshake
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em conn} & The connection to use \\
+\hline
+\mbox{\tt in}  & {\em pind} & Index of the path to use \\
+\hline
+\mbox{\tt in}  & {\em cmd} & Which command to send. See \hyperlink{group___c_m_d_values}{C\-M\-D values} \\
+\hline
+\mbox{\tt in}  & {\em status} & Which subcommand \\
+\hline
+\mbox{\tt in,out}  & {\em size} & Size of the data \\
+\hline
+\mbox{\tt in,out}  & {\em buff} & The data to send out. This function will add the mpt headers\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+This function will return with an error code differs from 0 in case of communication failure
+\end{DoxyReturn}
+\begin{center}
+
+\begin{DoxyImageNoCaption}  \mbox{\includegraphics{inline_mscgraph_1}}
+\end{DoxyImageNoCaption}
+\end{center}
+ \} 
+
+Definition at line 200 of file command.\-c.
+
+\hypertarget{command_8c_a94cc0db48e2e582aee04791f7e57581d}{\index{command.\-c@{command.\-c}!path\-\_\-change\-\_\-status@{path\-\_\-change\-\_\-status}}
+\index{path\-\_\-change\-\_\-status@{path\-\_\-change\-\_\-status}!command.c@{command.\-c}}
+\subsubsection[{path\-\_\-change\-\_\-status}]{\setlength{\rightskip}{0pt plus 5cm}int path\-\_\-change\-\_\-status (
+\begin{DoxyParamCaption}
+\item[{{\bf connection\-\_\-type} $\ast$}]{conn, }
+\item[{int}]{pind, }
+\item[{bit\-\_\-8}]{lstatus}
+\end{DoxyParamCaption}
+)}}\label{command_8c_a94cc0db48e2e582aee04791f7e57581d}
+Initiate the change of the path's status
+
+
+\begin{DoxyParams}{Parameters}
+{\em conn} & The connection to use \\
+\hline
+{\em pind} & Index of path \\
+\hline
+{\em lstatus} & The new status to use\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+On successful operation returns with 0, otherwise with -\/1. 
+\end{DoxyReturn}
+
+
+Definition at line 292 of file command.\-c.
+
+\hypertarget{command_8c_ab2b8fd2c85bbe180c1b53a5c2318b89b}{\index{command.\-c@{command.\-c}!replicate\-\_\-connection@{replicate\-\_\-connection}}
+\index{replicate\-\_\-connection@{replicate\-\_\-connection}!command.c@{command.\-c}}
+\subsubsection[{replicate\-\_\-connection}]{\setlength{\rightskip}{0pt plus 5cm}int replicate\-\_\-connection (
+\begin{DoxyParamCaption}
+\item[{{\bf connection\-\_\-type} $\ast$}]{conn}
+\end{DoxyParamCaption}
+)}}\label{command_8c_ab2b8fd2c85bbe180c1b53a5c2318b89b}
+Send data about a connection to its remote peer
+
+
+\begin{DoxyParams}{Parameters}
+{\em conn} & The connection which should be sent \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Returns 0 on successful communication 
+\end{DoxyReturn}
+\begin{DoxyRefDesc}{Todo}
+\item[\hyperlink{todo__todo000005}{Todo}]create compact/packed data, don't send the full connection\-\_\-type struct with empty spaces \end{DoxyRefDesc}
+
+
+\begin{DoxyRefDesc}{Todo}
+\item[\hyperlink{todo__todo000006}{Todo}]use port number received from remote \end{DoxyRefDesc}
+
+
+Definition at line 353 of file command.\-c.
+

@@ -1,0 +1,9 @@
+CLI_COMMAND( MPT_INT, "^(int|interface)( ([^[:space:]]+) (up|down))$" )   ///< mpt int[erface] IF {up|down}
+CLI_COMMAND( MPT_ADDR, "^(addr|address)( (add|del) ("REGEX_IPV4"|"REGEX_IPV6")(/([[:digit:]]+))? dev ([[:alnum:]]+)|.*)$" )   ///< mpt addr[ess] {add|del} IP[/PREFIX] dev IF
+CLI_COMMAND( MPT_RELOAD, "^reload(| ([^ ]+)| .*)$" )    ///< mpt reload [FILENAME]
+CLI_COMMAND( MPT_RESTART, "^restart(| ([^ ]+)| .*)$" )    ///< mpt restart [FILENAME]
+CLI_COMMAND( MPT_DELETE,   "^delete( ([^ ]+)|.*)$" )      ///< mpt delete FILENAME
+CLI_COMMAND( MPT_SAVE, "^save(| ([^ ]+)| .*)$" )        ///< mpt save [FILENAME]
+CLI_COMMAND( MPT_PATH, "^path( (up|down) ("REGEX_IPV4"|"REGEX_IPV6") ("REGEX_IPV4"|"REGEX_IPV6")| .*|)$" )    ///< mpt path {up|down} SRC_IP DST_IP
+CLI_COMMAND( MPT_STATUS, "^show status$" )              ///< mpt show status
+CLI_COMMAND( MPT_CREATE, "^create( ([^ ]+)|.*)$" )        ///< mpt create CONNECTION_NAME

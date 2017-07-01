@@ -1,0 +1,1087 @@
+auth.c: * Generate SHA-256 HASH
+auth.c:                memcpy(&conn->waitrand, &buff[4], authSize(AUTH_RAND));
+auth.c:            } else if(buff[sh+4] > 1 && memcmp(&conn->waitrand, &buff[4], authSize(AUTH_RAND)) != 0) {
+auth.c:        sha256(buff, size, conn->auth_key, keySize(conn->auth_type), &buff[8], &keysize);
+auth.c:                memset(&conn->waitrand, 0, authSize(AUTH_RAND));
+auth.c:                memcpy(&conn->waitrand, &random, authSize(AUTH_RAND));
+auth.c:            memcpy(&buff[4], &conn->waitrand, authSize(AUTH_RAND));
+auth.c:        sha256(buff, size, conn->auth_key, keySize(conn->auth_type), &buff[8], &hashsize);
+auth.c:    for(i=0; i<keySize(conn->auth_type); i++) {
+auth.c:        conn->auth_key[i] = HEX2DEC(hex[2*i]) << 4 | HEX2DEC(hex[2*i+1]);
+auth.c:    switch(conn->auth_type) {
+auth.c:            for(i=0; i<keySize(conn->auth_type); i++) {
+auth.c:                fprintf(fd, "%02X", (unsigned char)conn->auth_key[i]);
+cli.c:    (*this)->interface = NULL;
+cli.c:    (*this)->mark = NULL;
+cli.c:    if((*this)->interface) free((*this)->interface);
+cli.c:    if((*this)->mark) free((*this)->mark);
+cli.c:    (*this)->ip = NULL;
+cli.c:    (*this)->op = NULL;
+cli.c:    (*this)->mask = NULL;
+cli.c:    (*this)->dev = NULL;
+cli.c:    if((*this)->ip) free((*this)->ip);
+cli.c:    if((*this)->op) free((*this)->op);
+cli.c:    if((*this)->mask) free((*this)->mask);
+cli.c:    if((*this)->dev) free((*this)->dev);
+cli.c:    (*this)->op = NULL;
+cli.c:    memset((*this)->local_ip, 0, sizeof((*this)->local_ip));
+cli.c:    memset((*this)->remote_ip, 0, sizeof((*this)->remote_ip));
+cli.c:    if((*this)->op) free((*this)->op);
+cli.c: * @param pmatch Which match need to be saved. N-th element of array return by regexec \n
+cli.c:        *dst = (char*)malloc(pmatch.rm_eo - pmatch.rm_so + 1);
+cli.c:        strncpy(*dst, src+pmatch.rm_so, pmatch.rm_eo - pmatch.rm_so);
+cli.c:        *(*dst + pmatch.rm_eo - pmatch.rm_so) = 0;
+cli.c:                        save_match(&(ret_int->interface), cmd, pmatch[3]);
+cli.c:                        save_match(&(ret_int->mark), cmd, pmatch[4]);
+cli.c:                        save_match(&(ret_addr->op), cmd, pmatch[3]);
+cli.c:                        save_match(&(ret_addr->ip), cmd, pmatch[4]);
+cli.c:                        save_match(&(ret_addr->mask), cmd, pmatch[10]);
+cli.c:                        save_match(&(ret_addr->dev), cmd, pmatch[11]);
+cli.c:                        if(inet_pton(domain, ret_addr->ip, buf) <= 0) {
+cli.c:                        inet_ntop(domain, buf, ret_addr->ip, strlen(ret_addr->ip));
+cli.c:                        if(ret_addr->mask) {
+cli.c:                                if(atoi(ret_addr->mask)>32) {
+cli.c:                                if(atoi(ret_addr->mask)>128) {
+cli.c:                    } else if(pmatch[1].rm_eo - pmatch[1].rm_so > 0) rv = PARSE_ERR_PARAMS;
+cli.c:                        save_match(&(ret_path->op), cmd, pmatch[2]);
+cli.c:                            ret_path->local_ip[2] = 0xFFFF0000;
+cli.c:                        if(inet_pton(domain, temp, &(ret_path->local_ip[start])) <= 0) {
+cli.c:                            ret_path->remote_ip[2] = 0xFFFF0000;
+cli.c:                        if(inet_pton(domain, temp, &(ret_path->remote_ip[start])) <= 0) {
+cli.c:                printf("mpt int %s %s\n", ret_int->interface, ret_int->mark);
+cli.c:                if(strcmp(ret_int->mark, "down") == 0) {
+cli.c:                    interface_change_status(ret_int->interface, STAT_IF_DOWN);
+cli.c:                    sprintf(cmdstr, "bin/mpt_int_updown.sh %s %s", ret_int->interface, ret_int->mark);
+cli.c:                    sprintf(cmdstr, "bin/mpt_int_updown.sh %s %s", ret_int->interface, ret_int->mark);
+cli.c:    			for (i=0; i< conn->path_count; i++) {
+cli.c:        		    if (strcmp(ret_int->interface, conn->mpath[i].interface) == 0 ) {
+cli.c:				peer_route("add", &conn->mpath[i]);
+cli.c:    			conn = conn->next;
+cli.c:                    interface_change_status(ret_int->interface, STAT_OK);
+cli.c:                sprintf(cmdstr, "bin/mpt_addr_adddel.sh %s %s", ret_addr->op, ret_addr->ip);
+cli.c:                if(ret_addr->mask) sprintf(cmdstr+strlen(cmdstr), "/%s", ret_addr->mask);
+cli.c:                sprintf(cmdstr+strlen(cmdstr), " %s", ret_addr->dev);
+cli.c:                            p = mp_global_conn = p->next;
+cli.c:                            if(p) p->prev = NULL;
+cli.c:                            p = p->prev->next = p->next;
+cli.c:                        del->next = NULL;
+cli.c:                        if((newfile = (char*)malloc(strlen(del->filename)+strlen(".disabled")+1))) {
+cli.c:                            sprintf(newfile, "%s.disabled", del->filename);
+cli.c:                            rename(del->filename, newfile);
+cli.c:                if(strcmp(ret_path->op, "up") == 0) status = STAT_OK;
+cli.c:                else  if(strcmp(ret_path->op, "down") == 0) status = STAT_PATH_DOWN_MANUAL;
+cli.c:                            printf("Path change status requested with bad operation: #%s# \n", ret_path->op);
+cli.c:                    for(i=0; i<conn->path_count; i++) {
+cli.c:                        if((memcmp(conn->mpath[i].ip_public, ret_path->local_ip, 16) == 0) &&
+cli.c:                           (memcmp(conn->mpath[i].ip_remote, ret_path->remote_ip, 16) == 0)) {
+cli.c:                    conn = conn->next;
+cli.c: * @return Returns with the number of received bytes or with -1 on errors.
+cli.c:    if (ret <= 0) return(-1);
+cli.c:            ret = -1;
+command.c:        template = conn_search_name( recvd_conn->name);
+command.c:        DEBUG("Connection create failed - connection name already exists (%s) \n", recvd_conn->name);
+command.c:        i=0; if(recvd_conn->ip_version == 4) i=3;
+command.c:        ctemplate = conn_search_ip(recvd_conn->ip_version, &recvd_conn->ip_remote[i], &recvd_conn->ip_local[i], mp_global_conn);
+command.c:        DEBUG("Connection create failed - connection tunnel IP pair already exists (%s) \n", recvd_conn->name);
+command.c:            strcpy(ctemplate->filename, "conf.template");
+command.c://            ctemplate->port_local = 0; //bind to random port
+command.c://            ctemplate->status = CONN_STAT_OK;
+command.c:        for (i=0; i < conn->path_count; i++ ) {
+command.c:            if ((memcmp(&buff[sh+40], conn->mpath[i].ip_remote, SIZE_IN6ADDR) == 0) &&
+command.c:                (memcmp(&buff[sh+56], conn->mpath[i].ip_public, SIZE_IN6ADDR) == 0) &&
+command.c:                (conn->mpath[i].status != value) ) {
+command.c:            conn->mpath[i].last_keepalive = time(NULL);
+command.c:                    conn->mpath[i].status = value;
+command.c:                    if (conn->mpath[i].ip_version == 6) {
+command.c:                    fprintf(stderr, "Path status changed to 0x%02X (%s -> %s) \n", value, lipstr, ripstr);
+command.c:        memcpy(&buff[sh+40], &conn->port_local, 2);
+command.c: * Common communication function implementing four-way handshake
+command.c: *      --- [label="Can be more rounds (never used)"];
+command.c:    path = &(conn->mpath[0]);
+command.c:    auth_len = authSize(conn->auth_type);
+command.c:    cmdbuf[2]   = conn->auth_type; // The authentication type
+command.c:    memcpy(&cmdbuf[sh+ 8], conn->ip_local, SIZE_IN6ADDR);
+command.c:    memcpy(&cmdbuf[sh+24], conn->ip_remote,SIZE_IN6ADDR);
+command.c:    saddr.sin6_port = htons(conn->cmd_port_remote);
+command.c:    i = 0; ret = -1;
+command.c:        reterror("error: No answer from peer -1.", ret);
+command.c:        reterror("error: communication error -1.", -1);
+command.c:    i = 0; ret = -1;
+command.c:        reterror("error: No answer from peer -2.", ret);
+command.c:        reterror("error: communication error -2.", -1);
+command.c: * @return On successful operation returns with 0, otherwise with -1.
+command.c:    path = &(conn->mpath[0]);
+command.c:            sprintf(lipstr, "All path down for connection %s ", conn->name);
+command.c:            reterror(lipstr, -1);
+command.c:        fprintf(stderr, "Path status changed to 0x%02X (%s -> %s) \n",
+command.c:    fprintf(stderr, "Path status changed to 0x%02X (%s -> %s) \n", lstatus, lipstr, ripstr);
+command.c:    if(!(conn->permission & PERM_SEND)) return 0;
+command.c:    path = &(conn->mpath[0]);
+command.c:        sprintf(lipstr, "All path down for connection %s ", conn->name);
+command.c:        reterror(lipstr, -1);
+command.c:    if (peer->ip_version == 4) {
+command.c:    inet_ntop(af, &peer->ip_remote[start], destination_host, 128);
+command.c:    inet_ntop(af, &peer->ip_gw[start], gateway, 128);
+command.c:    sprintf(command, "bin/mpt_peer_routes.sh %s %d %s %s %s", op, peer->ip_version, destination_host, gateway, peer->interface);
+command.c:  for (j=0; j< conn->path_count; ++j) {
+command.c:    peer = &conn->mpath[j];
+command.c:    tunnelpeer.ip_version = conn->ip_version;
+command.c:    memcpy(&tunnelpeer.ip_remote, &conn->ip_remote, SIZE_IN6ADDR);
+command.c:    memcpy(&tunnelpeer.ip_gw, &conn->ip_local, SIZE_IN6ADDR);
+command.c:  for(j=0; j < conn->network_count; ++j){
+command.c:    network = &conn->networks[j];
+command.c:    if (network->version == 6) {
+command.c:    inet_ntop(af, &network->destination[start], destination_network, 128);
+command.c:    inet_ntop(af, &conn->ip_remote[start], gateway, 128);
+command.c:    sprintf(command, "bin/mpt_routes.sh add %d %s %d %s", network->version, destination_network, network->destination_prefix_length, gateway);
+command.c:  for (j= conn->path_count-1; j>=0;  --j) {
+command.c:    peer = &conn->mpath[j];
+command.c:    tunnelpeer.ip_version = conn->ip_version;
+command.c:    memcpy(&tunnelpeer.ip_remote, &conn->ip_remote, SIZE_IN6ADDR);
+command.c:    memcpy(&tunnelpeer.ip_gw, &conn->ip_local, SIZE_IN6ADDR);
+command.c:  for(j=0; j < conn->network_count; ++j){
+command.c:    network = &conn->networks[j];
+command.c:    if (network->version == 6) {
+command.c:    inet_ntop(af, &network->destination[start], destination_network, 128);
+command.c:    inet_ntop(af, &conn->ip_remote[start], gateway, 128);
+command.c:    sprintf(command, "bin/mpt_routes.sh del %d %s %d %s", network->version, destination_network, network->destination_prefix_length, gateway);
+command.c:    path = &(conn->mpath[0]);
+command.c:    /*TODO ipv6-os esetre kesobb*/
+command.c:        sprintf(lipstr, "No path has a remote peer for connection %s ", conn->name);
+command.c:        reterror(lipstr, -1);
+command.c:    if (!memcmp(newconn->ip_remote, conn->ip_local, sizeof(conn->ip_local))) {
+command.c:         strcpy(lipstr, conn->filename);
+command.c:         strcpy(conn->filename, lipstr);
+command.c:         are problems when client has no remote address for a path on mptsrv start-up.
+connection.c:        x = x - y;
+connection.c:        y = y - x;
+connection.c:    con->pathselectionlength = 0;
+connection.c:    lko = con->mpath[0].weight_out;
+connection.c:    for (i=0; i<PATH_SELECTION_LENGTH; i++) con->pathselectionlist[i] = NULL;
+connection.c:    for (i=0; i<con->path_count; i++) {
+connection.c:         lko = calc_lko(lko, con->mpath[i].weight_out );
+connection.c:         lkt = (lkt * con->mpath[i].weight_out ) / lko;
+connection.c:         con->mpath[i].selection_increment = 0;
+connection.c:         for (i=0; i < con->path_count; i++) {
+connection.c:              p = &con->mpath[i];
+connection.c:              cinc = p->selection_increment + (lkt / p->weight_out);
+connection.c:              if ((p->weight_out) && ( cinc < minincrement)) {
+connection.c:         con->pathselectionlist[j] = &con->mpath[minind];
+connection.c:         con->mpath[minind].selection_increment = minincrement;
+connection.c:         for (i=0; i<con->path_count; i++) // check if we are ready
+connection.c:                if ( con->mpath[i].selection_increment != minincrement) goto NEXT_SELECTION;
+connection.c:    con->path_index = 0;
+connection.c:    con->pathselectionlength = j+1;
+connection.c:printf("\nPathselection list length: %d, Final increment:%d\n", con->pathselectionlength, (int)minincrement);
+connection.c:        if (strcmp(act->name, conn_name) == 0)
+connection.c:        act = act->next;
+connection.c:        if (strcmp(act->filename, filename) == 0)
+connection.c:        act = act->next;
+connection.c:        if (act->status == CONN_STAT_EMPTY)
+connection.c:        act = act->next;
+connection.c: * @param single_conn - If NULL, then mp_global_conn is used to start all connections, otherwise only the specified connection will be started
+connection.c:	// p->reorder_window = CIRCLE_SIZE;
+connection.c:        if ( con->cmd_port_local != tun.cmd_port_rcv ) {
+connection.c:            con->cmd_port_local = tun.cmd_port_rcv;
+connection.c:        if (con->ip_version == 4) {
+connection.c:            if (con->ip_local[3] != tun.ip4) {
+connection.c:                con->ip_local[3] = tun.ip4;
+connection.c:                set_ipstr(ipstr, con->ip_local, 4);
+connection.c:            if (!memcmp(con->ip_local, tun.ip6, SIZE_IN6ADDR)) {
+connection.c:                memcpy(con->ip_local, tun.ip6, SIZE_IN6ADDR ); // The tunnel address must be the same as in the interface file
+connection.c:                set_ipstr(ipstr, con->ip_local, 6);
+connection.c:        con->circlestart = 0;
+connection.c:        con->circlepackets = 0;
+connection.c:        con->seq_start = 0;
+connection.c:        memset(con->gre_header, 0, 16);
+connection.c:        if (con->ip_version == 6) {
+connection.c:            con->gre_header[2]=0x86;
+connection.c:            con->gre_header[3]=0xDD;
+connection.c:            con->gre_header[2]=0x08;
+connection.c:            con->gre_header[3]=0x00;
+connection.c:        if (con->reorder_window == 0) con->gre_length = 4;
+connection.c:        else { con->gre_length = 8; con->gre_header[0] |= 0x10; }
+connection.c:        reorder_window_1 = con->reorder_window + 1;
+connection.c:        con->circle_window = 2*reorder_window_1;
+connection.c:DEBUG("connection_start - pathselection start\n");
+connection.c:DEBUG("connection_start - pathselection ended\n");
+connection.c:	    for (i=0; i < con->path_count; i++ ) {
+connection.c:                path = &con->mpath[i];
+connection.c:                path->connection = con;
+connection.c:		        path->grebuffarray = malloc(reorder_window_1 * sizeof(grebuff_type) );
+connection.c:                memset(&path->peer, 0, sizeof(path->peer));
+connection.c:                path->peer.sin6_port = htons(con->port_remote);
+connection.c:                memcpy(&path->peer.sin6_addr, path->ip_remote, SIZE_IN6ADDR);
+connection.c:                pthread_create(&path->socket_read, NULL, socket_read_thread, path );
+connection.c:                if (path->keepalive) pthread_create(&path->keepalive_send, NULL, keepalive_send_thread, path);
+connection.c:        for (i=0; i< con->circle_window ; i++ ) con->circlebuff[i] = NULL;
+connection.c:        if (con->reorder_window) pthread_create(&con->circlebuffer_handler, NULL, circulatebuffer_handler, con );
+connection.c:        con = con->next;
+connection.c: * @param single_conn - If NULL, then mp_global_conn is used to stop all connections, otherwise only the specified connection will be stopped
+connection.c://        pthread_cancel(p->socket_read);
+connection.c:        for (i=0; i < p->path_count; i++ ) {
+connection.c:                if (p->mpath[i].keepalive) pthread_cancel(p->mpath[i].keepalive_send);
+connection.c:                pthread_cancel(p->mpath[i].socket_read);
+connection.c:                close(p->mpath[i].socket);
+connection.c:        if (p->reorder_window) pthread_cancel(p->circlebuffer_handler);
+connection.c:        p = p->next;
+connection.c:DEBUG("connection_delete active - round %d \n", r);
+connection.c:        conn_next = conn->next;
+connection.c:            delconn = delconn->next;
+connection.c:            if (prev) prev->next = delconn->next;
+connection.c:            if (delconn == mp_global_conn)  mp_global_conn = mp_global_conn->next;
+connection.c: * @param single_conn - If NULL, then mp_global_conn is used to restart all connections, otherwise only the specified connection will be restarted
+connection.c:       conn->status = STAT_OK;
+connection.c:       for  (i=0; i<conn->path_count; i++ )
+connection.c:            conn->mpath[i].status = STAT_OK;
+connection.c:       conn = conn->next;
+connection.c: * @param single_conn - If NULL, then mp_global_conn is used to reload all connections, otherwise only the specified connection will be reloaded
+connection.c:    if (single_conn) strcpy(filename, single_conn->filename);
+connection.c:DEBUG("Starting connections - reload\n");
+connection.c:    con = (connection_type *)path->connection;
+connection.c:    sockaddr6.sin6_port   = htons(con->port_local);
+connection.c:    memcpy(&(sockaddr6.sin6_addr), &path->ip_private, SIZE_IN6ADDR);
+connection.c:            set_ipstr(ipstr, path->ip_private, path->ip_version);
+connection.c:            sprintf(msg, "Socket bind error - cannot bind local data %s:%d  interface:%s", ipstr, con->port_local, path->interface );
+connection.c:    if (con->port_local == 0) { // This is the first path: store the port num.
+connection.c:            con->port_local = ntohs(sockaddr6.sin6_port);
+connection.c:    path->socket = sock6;
+connection.c://  printf("Path socket created %d \n", path->socket);
+connection.c:  for(found = 0; act != NULL; act = act->next){
+connection.c:            if ((p->ip_version == 4)  && (p->ip_local[3] == *local)
+connection.c:             && (p->ip_remote[3] == *remote))
+connection.c: //printf("%0lX - %0lX \n", p->ip_local[3], *local);
+connection.c:            p = p->next;
+connection.c:            if ( (!memcmp(p->ip_local, local, SIZE_IN6ADDR))
+connection.c:               && (!memcmp(p->ip_remote, remote, SIZE_IN6ADDR)))
+connection.c:            p = p->next;
+connection.c:  int found = !memcmp(conn->ip_local, local, SIZE_IN6ADDR);
+connection.c:  DEBUG("conn->ip_local:%X:%X:%X:%X, local:%X:%X:%X:%X", conn->ip_local[0], conn->ip_local[1], conn->ip_local[2], conn->ip_local[3], local[0], local[1], local[2], local[3]);
+connection.c:  for(i=0; !found && i < conn->network_count; i++){
+connection.c:	prefix_length = conn->networks[i].source_prefix_length;
+connection.c:    set_ipv6_network(conn->networks[i].source, mask, network);
+connection.c:	conn->networks[i].source[0], conn->networks[i].source[1], conn->networks[i].source[2], conn->networks[i].source[3],
+connection.c:    found = !memcmp(conn->networks[i].source, network, SIZE_IN6ADDR);
+connection.c://  found = conn->ip_remote[3] == *remote;
+connection.c:  found = !memcmp(conn->ip_remote, remote, SIZE_IN6ADDR);
+connection.c:  for(i=0; !found && i < conn->network_count; i++){
+connection.c:	prefix_length = conn->networks[i].destination_prefix_length;
+connection.c:    set_ipv6_network(conn->networks[i].destination, mask, network);
+connection.c:    found = !memcmp(conn->networks[i].destination, network, SIZE_IN6ADDR);
+connection.c:  if(conn->ip_version != 4){
+connection.c:  int found = conn->ip_local[3] == *local;
+connection.c:  DEBUG("conn->local:%X, local:%X, conn->remote:%X, remote:%X, found: %d",conn->ip_local[3], *local, conn->ip_remote[3], *remote, found);
+connection.c:  for(i=0; !found && i < conn->network_count; i++){
+connection.c:	prefix_length = conn->networks[i].source_prefix_length;
+connection.c:    DEBUG("conn->networks[i].source:%X:%X:%X:%X, mask: %X network:%X\n",conn->networks[i].source[0], conn->networks[i].source[1], conn->networks[i].source[2], conn->networks[i].source[3], mask, network);
+connection.c:    found = conn->networks[i].source[3] == network;
+connection.c:  found = conn->ip_remote[3] == *remote;
+connection.c:  //DEBUG("conn->local:%X, local:%X, conn->remote:%X, remote:%X, found: %d",conn->ip_local[3], *local, conn->ip_remote[3], *remote, found);
+connection.c:  for(i=0; !found && i < conn->network_count; i++){
+connection.c:	prefix_length = conn->networks[i].destination_prefix_length;
+connection.c:    //DEBUG("conn->networks[i].destination:%X, network:%X\n",conn->networks[i].source[3], network);
+connection.c:    found = conn->networks[i].destination[3] == network;
+iniparser.c:/*-------------------------------------------------------------------------*/
+iniparser.c:/*--------------------------------------------------------------------------*/
+iniparser.c:/*---------------------------------------------------------------------------
+iniparser.c: ---------------------------------------------------------------------------*/
+iniparser.c:/*---------------------------- Defines -------------------------------------*/
+iniparser.c:#define INI_INVALID_KEY     ((char*)-1)
+iniparser.c:#define DICT_INVALID_KEY    ((char*)-1)
+iniparser.c:/*---------------------------------------------------------------------------
+iniparser.c: ---------------------------------------------------------------------------*/
+iniparser.c:/*-------------------------------------------------------------------------*/
+iniparser.c:/*--------------------------------------------------------------------------*/
+iniparser.c:/*---------------------------------------------------------------------------
+iniparser.c: ---------------------------------------------------------------------------*/
+iniparser.c:/*-------------------------------------------------------------------------*/
+iniparser.c:  This is normally a collision-free function, distributing keys evenly.
+iniparser.c:/*--------------------------------------------------------------------------*/
+iniparser.c:/*-------------------------------------------------------------------------*/
+iniparser.c:/*--------------------------------------------------------------------------*/
+iniparser.c:    d->size = size ;
+iniparser.c:    d->val  = (char **)calloc(size, sizeof(char*));
+iniparser.c:    d->key  = (char **)calloc(size, sizeof(char*));
+iniparser.c:    d->hash = (unsigned int *)calloc(size, sizeof(unsigned));
+iniparser.c:/*-------------------------------------------------------------------------*/
+iniparser.c:/*--------------------------------------------------------------------------*/
+iniparser.c:    for (i=0 ; i<d->size ; i++) {
+iniparser.c:        if (d->key[i]!=NULL)
+iniparser.c:            free(d->key[i]);
+iniparser.c:        if (d->val[i]!=NULL)
+iniparser.c:            free(d->val[i]);
+iniparser.c:    free(d->val);
+iniparser.c:    free(d->key);
+iniparser.c:    free(d->hash);
+iniparser.c:/*-------------------------------------------------------------------------*/
+iniparser.c:/*--------------------------------------------------------------------------*/
+iniparser.c:    for (i=0 ; i<d->size ; i++) {
+iniparser.c:        if (d->key[i]==NULL)
+iniparser.c:        if (hash==d->hash[i]) {
+iniparser.c:            if (!strcmp(key, d->key[i])) {
+iniparser.c:                return d->val[i] ;
+iniparser.c:/*-------------------------------------------------------------------------*/
+iniparser.c:  This function returns non-zero in case of failure.
+iniparser.c:/*--------------------------------------------------------------------------*/
+iniparser.c:    if (d==NULL || key==NULL) return -1 ;
+iniparser.c:    if (d->n>0) {
+iniparser.c:        for (i=0 ; i<d->size ; i++) {
+iniparser.c:            if (d->key[i]==NULL)
+iniparser.c:            if (hash==d->hash[i]) { /* Same hash value */
+iniparser.c:                if (!strcmp(key, d->key[i])) {   /* Same key */
+iniparser.c:                    if (d->val[i]!=NULL)
+iniparser.c:                        free(d->val[i]);
+iniparser.c:                    d->val[i] = val ? xstrdup(val) : NULL ;
+iniparser.c:    if (d->n==d->size) {
+iniparser.c:        d->val  = (char **)mem_double(d->val,  d->size * sizeof(char*)) ;
+iniparser.c:        d->key  = (char **)mem_double(d->key,  d->size * sizeof(char*)) ;
+iniparser.c:        d->hash = (unsigned int *)mem_double(d->hash, d->size * sizeof(unsigned)) ;
+iniparser.c:        if ((d->val==NULL) || (d->key==NULL) || (d->hash==NULL)) {
+iniparser.c:            return -1 ;
+iniparser.c:        d->size *= 2 ;
+iniparser.c:    /* Insert key in the first empty slot. Start at d->n and wrap at
+iniparser.c:       d->size. Because d->n < d->size this will necessarily
+iniparser.c:    for (i=d->n ; d->key[i] ; ) {
+iniparser.c:        if(++i == d->size) i = 0;
+iniparser.c:    d->key[i]  = xstrdup(key);
+iniparser.c:    d->val[i]  = val ? xstrdup(val) : NULL ;
+iniparser.c:    d->hash[i] = hash;
+iniparser.c:    d->n ++ ;
+iniparser.c:/*-------------------------------------------------------------------------*/
+iniparser.c:/*--------------------------------------------------------------------------*/
+iniparser.c:    for (i=0 ; i<d->size ; i++) {
+iniparser.c:        if (d->key[i]==NULL)
+iniparser.c:        if (hash==d->hash[i]) {
+iniparser.c:            if (!strcmp(key, d->key[i])) {
+iniparser.c:    if (i>=d->size)
+iniparser.c:    free(d->key[i]);
+iniparser.c:    d->key[i] = NULL ;
+iniparser.c:    if (d->val[i]!=NULL) {
+iniparser.c:        free(d->val[i]);
+iniparser.c:        d->val[i] = NULL ;
+iniparser.c:    d->hash[i] = 0 ;
+iniparser.c:    d->n -- ;
+iniparser.c:/*-------------------------------------------------------------------------*/
+iniparser.c:/*--------------------------------------------------------------------------*/
+iniparser.c:    if (d->n<1) {
+iniparser.c:    for (i=0 ; i<d->size ; i++) {
+iniparser.c:        if (d->key[i]) {
+iniparser.c:                    d->key[i],
+iniparser.c:                    d->val[i] ? d->val[i] : "UNDEF");
+iniparser.c:    if (d->n != 0) {
+iniparser.c:/*---------------------------------------------------------------------------
+iniparser.c: ---------------------------------------------------------------------------*/
+iniparser.c:/*-------------------------------------------------------------------------*/
+iniparser.c:  allocated, it will be modified at each function call (not re-entrant).
+iniparser.c:/*--------------------------------------------------------------------------*/
+iniparser.c:/*-------------------------------------------------------------------------*/
+iniparser.c:  (not re-entrant).
+iniparser.c:/*--------------------------------------------------------------------------*/
+iniparser.c:        if (!isspace((int)*(last-1)))
+iniparser.c:        last -- ;
+iniparser.c:/*-------------------------------------------------------------------------*/
+iniparser.c:  This function returns -1 in case of error.
+iniparser.c:/*--------------------------------------------------------------------------*/
+iniparser.c:    if (d==NULL) return -1 ;
+iniparser.c:    for (i=0 ; i<d->size ; i++) {
+iniparser.c:        if (d->key[i]==NULL)
+iniparser.c:        if (strchr(d->key[i], ':')==NULL) {
+iniparser.c:/*-------------------------------------------------------------------------*/
+iniparser.c:  @param    n   Section number (from 0 to nsec-1).
+iniparser.c:  This function locates the n-th section in a dictionary and returns
+iniparser.c:/*--------------------------------------------------------------------------*/
+iniparser.c:    for (i=0 ; i<d->size ; i++) {
+iniparser.c:        if (d->key[i]==NULL)
+iniparser.c:        if (strchr(d->key[i], ':')==NULL) {
+iniparser.c:    return d->key[i] ;
+iniparser.c:/*-------------------------------------------------------------------------*/
+iniparser.c:/*--------------------------------------------------------------------------*/
+iniparser.c:    for (i=0 ; i<d->size ; i++) {
+iniparser.c:        if (d->key[i]==NULL)
+iniparser.c:        if (d->val[i]!=NULL) {
+iniparser.c:            fprintf(f, "[%s]=[%s]\n", d->key[i], d->val[i]);
+iniparser.c:            fprintf(f, "[%s]=UNDEF\n", d->key[i]);
+iniparser.c:/*-------------------------------------------------------------------------*/
+iniparser.c:/*--------------------------------------------------------------------------*/
+iniparser.c:        for (i=0 ; i<d->size ; i++) {
+iniparser.c:            if (d->key[i]==NULL)
+iniparser.c:            fprintf(f, "%s = %s\n", d->key[i], d->val[i]);
+iniparser.c:/*-------------------------------------------------------------------------*/
+iniparser.c:/*--------------------------------------------------------------------------*/
+iniparser.c:    for (j=0 ; j<d->size ; j++) {
+iniparser.c:        if (d->key[j]==NULL)
+iniparser.c:        if (!strncmp(d->key[j], keym, seclen+1)) {
+iniparser.c:                    "%-30s = %s\n",
+iniparser.c:                    d->key[j]+seclen+1,
+iniparser.c:                    d->val[j] ? d->val[j] : "");
+iniparser.c:/*-------------------------------------------------------------------------*/
+iniparser.c:/*--------------------------------------------------------------------------*/
+iniparser.c:    for (j=0 ; j<d->size ; j++) {
+iniparser.c:        if (d->key[j]==NULL)
+iniparser.c:        if (!strncmp(d->key[j], keym, seclen+1))
+iniparser.c:/*-------------------------------------------------------------------------*/
+iniparser.c:  Each pointer in the returned char pointer-to-pointer is pointing to
+iniparser.c:/*--------------------------------------------------------------------------*/
+iniparser.c:    for (j=0 ; j<d->size ; j++) {
+iniparser.c:        if (d->key[j]==NULL)
+iniparser.c:        if (!strncmp(d->key[j], keym, seclen+1)) {
+iniparser.c:            keys[i] = d->key[j];
+iniparser.c:/*-------------------------------------------------------------------------*/
+iniparser.c:/*--------------------------------------------------------------------------*/
+iniparser.c:/*-------------------------------------------------------------------------*/
+iniparser.c:  "42"      ->  42
+iniparser.c:  "042"     ->  34 (octal -> decimal)
+iniparser.c:  "0x42"    ->  66 (hexa  -> decimal)
+iniparser.c:/*--------------------------------------------------------------------------*/
+iniparser.c:/*-------------------------------------------------------------------------*/
+iniparser.c:/*--------------------------------------------------------------------------*/
+iniparser.c:/*-------------------------------------------------------------------------*/
+iniparser.c:  - A string starting with 'y'
+iniparser.c:  - A string starting with 'Y'
+iniparser.c:  - A string starting with 't'
+iniparser.c:  - A string starting with 'T'
+iniparser.c:  - A string starting with '1'
+iniparser.c:  - A string starting with 'n'
+iniparser.c:  - A string starting with 'N'
+iniparser.c:  - A string starting with 'f'
+iniparser.c:  - A string starting with 'F'
+iniparser.c:  - A string starting with '0'
+iniparser.c:/*--------------------------------------------------------------------------*/
+iniparser.c:/*-------------------------------------------------------------------------*/
+iniparser.c:/*--------------------------------------------------------------------------*/
+iniparser.c:/*-------------------------------------------------------------------------*/
+iniparser.c:  @return   int 0 if Ok, -1 otherwise.
+iniparser.c:  contain the provided value. If it cannot be found, -1 is returned.
+iniparser.c:/*--------------------------------------------------------------------------*/
+iniparser.c:/*-------------------------------------------------------------------------*/
+iniparser.c:/*--------------------------------------------------------------------------*/
+iniparser.c:/*-------------------------------------------------------------------------*/
+iniparser.c:  @param    input_line  Input line, may be concatenated multi-line input
+iniparser.c:/*--------------------------------------------------------------------------*/
+iniparser.c:    } else if (line[0]=='[' && line[len-1]==']') {
+iniparser.c:/*-------------------------------------------------------------------------*/
+iniparser.c:/*--------------------------------------------------------------------------*/
+iniparser.c:    while (fgets(line+last, ASCIILINESZ-last, in)!=NULL) {
+iniparser.c:        len = (int)strlen(line)-1;
+iniparser.c:            len-- ;
+iniparser.c:        /* Detect multi-line */
+iniparser.c:            /* Multi-line value */
+iniparser.c:            fprintf(stderr, "-> %s\n", line);
+iniparser.c:/*-------------------------------------------------------------------------*/
+iniparser.c:/*--------------------------------------------------------------------------*/
+inout.c:    for (i = 32; i >= 0; i--) {
+inout.c:	--i;
+inout.c:    if ((sock = socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
+inout.c:    if (ioctl(sock, SIOCGIFADDR, &req) == -1) {
+inout.c:    inet_ntop(AF_INET, &p->sin_addr, result, 64);
+inout.c://    set_ipstr(result, (struct sockaddr_in *)(&(req.ifr_addr)))->sin_addr, 4)
+inout.c:// Determines the global ip address of an interface (maybe behind a NAT-Box)
+inout.c:#define GETSTR "GET / HTTP/1.1\nUser-Agent: Wget/1.15 (linux-gnu)\nAccept: */*\nHost: checkip.dyndns.org\nConnection: Keep-Alive\n\n\n"
+inout.c:   for (rp = result; rp != NULL; rp = rp->ai_next) {
+inout.c:        sfd = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
+inout.c:        if (sfd == -1)
+inout.c:        //set the socket in non-blocking
+inout.c:        inet_ntop(AF_INET, rp->ai_addr, serverip, 128);
+inout.c:        if (gateway) { sprintf(cmd, "route add -host %s gw %s dev %s ", serverip, gateway, intname); system(cmd);}
+inout.c:        connect(sfd, rp->ai_addr, rp->ai_addrlen);
+inout.c:        if (gateway) { sprintf(cmd, "route del -host %s gw %s ", serverip, gateway); system(cmd);}
+inout.c:   if (gateway) { sprintf(cmd, "route del -host %s gw %s ", serverip, gateway); system(cmd);}
+inout.c:// Determines the global ip address of an interface (maybe behind a NAT-Box)
+inout.c:       if ( ( b >= '0') && (b<= '9') ) return (b - '0');
+inout.c:       return (b-'a'+10);
+inout.c:   if ( (gateway) && (intname)) { sprintf(cmd, "route add -host %s gw %s dev %s ", serveriptxt, gateway, intname); system(cmd);}
+inout.c://   if ( (gateway) && (intname)) { sprintf(cmd, "route add -host %s gw %s dev %s ", serveriptxt, gateway, intname); system(cmd);}
+inout.c://   if (gateway) { sprintf(cmd, "route del -host %s gw %s ", serveriptxt, gateway); system(cmd);}
+inout.c:   if ( (gateway) && (intname)) { sprintf(cmd, "route del -host %s gw %s dev %s ", serveriptxt, gateway, intname); system(cmd);}
+inout.c: *      conn_load_dir -> conn_load -> {conn_new, conn_parser};
+inout.c: *      conn_reload_dir -> conn_reload -> {conn_parser, conn_activate};
+inout.c: *      conn_activate -> {conn_diff, conn_replicate, conn_start};
+inout.c: *      conn_replicate -> handshake -> CMD_REPLICATE;
+inout.c: *      CMD_REPLICATE2 -> cmd_read_thread -> do_command;
+inout.c: *      do_command -> {conn_mirror, conn_activate};
+inout.c:    fprintf(stream, "    Tunnel interface : %s\n", tunp->interface);
+inout.c:    fprintf(stream, "    Tunnel device    : %s\n", tunp->device);
+inout.c:    fprintf(stream, "    Tunnel file desc.: %d\n", tunp->fd);
+inout.c:    fprintf(stream, "    Tunnel int. MTU  : %d\n", tunp->mtu);
+inout.c:    inet_ntop(AF_INET, &tunp->ip4, ipstr, 255);
+inout.c:    if (tunp->ip4len)
+inout.c:	fprintf(stream, "    Tunnel ipv4 addr.: %s/%d\n", ipstr, tunp->ip4len);
+inout.c:    inet_ntop(AF_INET6, &tunp->ip6, ipstr, 255);
+inout.c:    if (tunp->ip6len)
+inout.c:	fprintf(stream, "    Tunnel ipv6 addr.: %s/%d\n", ipstr, tunp->ip6len);
+inout.c:    fprintf(stream, "    CMD server port number  : %d\n", tunp->cmd_port_rcv);
+inout.c://    printf("    CMD client port number  : %d\n", tun->cmd_port_snd );
+inout.c://    printf("    CMD client socket id    : %d\n", tun->cmd_socket_snd );
+inout.c:        printf("conn_print_item called with NULL argument - returning\n");
+inout.c:    set_ipstr(lipstr, conn->ip_local, conn->ip_version);
+inout.c:    set_ipstr(ripstr, conn->ip_remote, conn->ip_version);
+inout.c:    fprintf(stream, "Connection name  : %s \n", conn->name);
+inout.c:    fprintf(stream, "    Config file           : %s\n", conn->filename);
+inout.c:    fprintf(stream, "    IP version            : %d\n", conn->ip_version);
+inout.c:    fprintf(stream, "    Local  UDP Port       : %d\n", conn->port_local);
+inout.c:    fprintf(stream, "    Local  CMD UDP Port   : %d\n", conn->cmd_port_local);
+inout.c:	    conn->port_remote);
+inout.c://    fprintf(stream, "    Socket ID             : %d\n", conn->socket);
+inout.c:	    conn->cmd_port_remote);
+inout.c:    fprintf(stream, "    Number of Paths       : %d\n", conn->path_count);
+inout.c:	    conn->network_count);
+inout.c:	    conn->conn_packet);
+inout.c:    fprintf(stream, "    Connection update     : %d\n", conn->permission);
+inout.c:    fprintf(stream, "    Authentication type   : %d\n", conn->auth_type);
+inout.c:    //fprintf(stream, "    Authentication code   : "); printHash(conn->auth_key, keySize(conn->auth_type));
+inout.c:    fprintf(stream, "    Connection reorder win: %d\n", conn->reorder_window);
+inout.c:    fprintf(stream, "    Max. delay in rcv.buff: %d(sec) %d(msec)\n", (int)conn->max_buffdelay.tv_sec, (int)conn->max_buffdelay.tv_usec/1000);
+inout.c:    fprintf(stream, "    Connection status     : %d\n", conn->status);
+inout.c:    if (conn->path_count <= 0)
+inout.c:    p = conn->mpath;
+inout.c:    for (i = 0; i < conn->path_count; i++) {
+inout.c:	if (p->ip_version == 6) {
+inout.c:	inet_ntop(af, &p->ip_public[start], lipstr, 128);
+inout.c:	inet_ntop(af, &p->ip_private[start], pipstr, 128);
+inout.c:	inet_ntop(af, &p->ip_remote[start], ripstr, 128);
+inout.c:	inet_ntop(af, &p->ip_gw[start], gwstr, 128);
+inout.c:	fprintf(stream, "     Interface name:    : %s\n", p->interface);
+inout.c://        fprintf(stream, "     IP version         : %d \n", p->ip_version);
+inout.c://	mac = (unsigned char *) p->mac_local;
+inout.c://	mac = (unsigned char *) p->mac_gw;
+inout.c:	fprintf(stream, "     Incoming weight    : %d\n", p->weight_in);
+inout.c:	fprintf(stream, "     Outgoing weight    : %d\n", p->weight_out);
+inout.c://	fprintf(stream, "     Path window size   : %d\n", p->packet_max);
+inout.c:    fprintf(stream, "     Keepalive time     : %d\n", p->keepalive);
+inout.c:    fprintf(stream, "     Dead timer         : %d\n", p->deadtimer);
+inout.c:	fprintf(stream, "     Path Status        : %d\n", p->status);
+inout.c:	if (conn->network_count) fprintf(stream, "Networks:\n");
+inout.c:	for (i = 0; i < conn->network_count; i++) {
+inout.c:	    if (p->ip_version == 6) {
+inout.c:	    inet_ntop(af, &conn->networks[i].source[start], lipstr, 128);
+inout.c:	    inet_ntop(af, &conn->networks[i].destination[start], ripstr,
+inout.c:	    fprintf(stream, "-------- Network %d ----------\n", i);
+inout.c:	    fprintf(stream, "    IP version       : %d\n",  conn->networks[i].version);
+inout.c:	    fprintf(stream, "    Source           : %s/%d\n", lipstr, conn->networks[i].source_prefix_length);
+inout.c:	    fprintf(stream, "    Destination      : %s/%d\n", ripstr, conn->networks[i].destination_prefix_length);
+inout.c:        cp = cp->next;
+inout.c:        conn = conn->next;
+inout.c:// connection_save - saves the conn connection to the file descriptor fd
+inout.c:    fprintf(fd, "%-16s = %s\n", "name", conn->name);
+inout.c:    fprintf(fd, "%-16s = %d\n", "permission", conn->permission);
+inout.c:    fprintf(fd, "%-16s = %d\n", "ip_ver", conn->ip_version);
+inout.c:    set_ipstr(conf_value, conn->ip_local, conn->ip_version);
+inout.c:    fprintf(fd, "%-16s = %s\n", "ip_local", conf_value);
+inout.c:    fprintf(fd, "%-16s = %d\n", "local_port", conn->port_local);
+inout.c:    fprintf(fd, "%-16s = %d\n", "local_cmd_port", conn->cmd_port_local);
+inout.c:    set_ipstr(conf_value, conn->ip_remote, conn->ip_version);
+inout.c:    fprintf(fd, "%-16s = %s\n", "ip_remote", conf_value);
+inout.c:    fprintf(fd, "%-16s = %d\n", "remote_port", conn->port_remote);
+inout.c:    fprintf(fd, "%-16s = %d\n", "remote_cmd_port", conn->cmd_port_remote);
+inout.c:    path_count = conn->path_count;
+inout.c:    fprintf(fd, "%-16s = %d\n", "path_count", conn->path_count);
+inout.c:    network_count = conn->network_count;
+inout.c:    fprintf(fd, "%-16s = %d\n", "network_count", conn->network_count);
+inout.c:    fprintf(fd, "%-16s = %d\n", "status", conn->status);
+inout.c:    fprintf(fd, "%-16s = %d\n", "reorder_window", conn->reorder_window);
+inout.c:    fprintf(fd, "%-16s = %d\n", "max_buffdelay_msec", (int)conn->max_buffdelay.tv_sec*1000 + (int)conn->max_buffdelay.tv_usec/1000 );
+inout.c:    fprintf(fd, "%-16s = %d\n", "auth_type", conn->auth_type);
+inout.c:    fprintf(fd, "%-16s = %s\n", "auth_key", conn->auth_key);
+inout.c:    p = conn->mpath;
+inout.c:	fprintf(fd, "%-16s = %s\n", "interface_name", p->interface);
+inout.c:	fprintf(fd, "%-16s = %d\n", "ip_ver", p->ip_version);
+inout.c://	mac_ntop((char *) p->mac_gw, conf_value);
+inout.c://	fprintf(fd, "%-16s = %s\n", "local_macaddr", conf_value);
+inout.c:	set_ipstr(conf_value, p->ip_private, p->ip_version);
+inout.c:	fprintf(fd, "%-16s = %s\n", "private_ipaddr", conf_value);
+inout.c:	set_ipstr(conf_value, p->ip_public, p->ip_version);
+inout.c:	fprintf(fd, "%-16s = %s\n", "public_ipaddr", conf_value);
+inout.c://	mac_ntop((char *) p->mac_gw, conf_value);
+inout.c://	fprintf(fd, "%-16s = %s\n", "gw_macaddr", conf_value);
+inout.c:	set_ipstr(conf_value, p->ip_gw, p->ip_version);
+inout.c:	fprintf(fd, "%-16s = %s\n", "gw_ipaddr", conf_value);
+inout.c:	set_ipstr(conf_value, p->ip_remote, p->ip_version);
+inout.c:	fprintf(fd, "%-16s = %s\n", "remote_ipaddr", conf_value);
+inout.c:    fprintf(fd, "%-16s = %d\n", "keepalive_time", p->keepalive);
+inout.c:    fprintf(fd, "%-16s = %d\n", "dead_time", p->deadtimer);
+inout.c:	fprintf(fd, "%-16s = %d\n", "weight_in", p->weight_out);
+inout.c:	fprintf(fd, "%-16s = %d\n", "weight_out", p->weight_out);
+inout.c://	fprintf(fd, "%-16s = %d\n", "window_size", p->packet_max);
+inout.c:	fprintf(fd, "%-16s = %d\n", "status", p->status);
+inout.c:    n = conn->networks;
+inout.c:	fprintf(fd, "%-16s = %d\n", "ip_ver", n->version);
+inout.c:	set_ipstr(conf_value, n->source, n->version);
+inout.c:	fprintf(fd, "%-16s = %s/%d\n", "src_addr", conf_value, n->source_prefix_length);
+inout.c:	set_ipstr(conf_value, n->destination, n->version);
+inout.c:	fprintf(fd, "%-16s = %s/%d\n", "dst_addr", conf_value, n->destination_prefix_length);
+inout.c:    for (conn = mp_global_conn; conn != NULL ; conn = conn->next) {
+inout.c:                if (strcmp(conn->filename, filename) == 0) {
+inout.c:                    fd = fopen(conn->filename, "w");
+inout.c:	if (strlen(ep->d_name) < 5
+inout.c:	    || strcmp(ep->d_name + strlen(ep->d_name) - 5, ".conf") != 0)
+inout.c:	conn_load(ep->d_name, conn_last);
+inout.c:	    while (conn_last->next) conn_last = conn_last->next;
+inout.c:    //sprintf(file_path, "conf/connections/%s", conn->filename);
+inout.c:    conf = iniparser_load(conn->filename);
+inout.c:            while (conn->next) conn = conn->next;
+inout.c:            conn->next = cp;
+inout.c:            cp->prev = conn;
+inout.c:    cp->status = CONN_STAT_EMPTY;
+inout.c:	while (conn->next)
+inout.c:	    conn = conn->next;
+inout.c:    strcpy(conn->filename, filename);
+inout.c:    if (strcmp(old->name, new->name) != 0) {
+inout.c:	strcpy(old->name, new->name);
+inout.c:    if (strcmp(old->filename, new->filename) != 0) {
+inout.c:	strcpy(old->filename, new->filename);
+inout.c:    if (old->port_local != new->port_local) {
+inout.c:	old->port_local = new->port_local;
+inout.c:    if (old->port_remote != new->port_remote) {
+inout.c:	old->port_remote = new->port_remote;
+inout.c:    if (old->cmd_port_remote != new->cmd_port_remote) {
+inout.c:	old->cmd_port_remote = new->cmd_port_remote;
+inout.c:    if (old->auth_type != new->auth_type) {
+inout.c:	old->auth_type = new->auth_type;
+inout.c:    if (strcmp(old->auth_key, new->auth_key) != 0) {
+inout.c:	strncpy(old->auth_key, new->auth_key, 128);
+inout.c:    if (old->reorder_window != new->reorder_window) {
+inout.c:	old->reorder_window = new->reorder_window;
+inout.c:    if (old->status != new->status) {
+inout.c:	old->status = new->status;
+inout.c:    if (old->permission != new->permission) {
+inout.c:	old->permission = new->permission;
+inout.c:    for (i = 0; i < new->path_count; i++) {
+inout.c:	for (j = 0; j < old->path_count; j++) {
+inout.c:	    if (old->mpath[j].ip_version == 4) {
+inout.c:		if (old->mpath[j].ip_version == new->mpath[i].ip_version
+inout.c:		    && old->mpath[j].ip_public[3] ==
+inout.c:		    new->mpath[i].ip_public[3]
+inout.c:		    && old->mpath[j].ip_remote[3] ==
+inout.c:		    new->mpath[i].ip_remote[3])
+inout.c:		if (old->mpath[j].ip_version == new->mpath[i].ip_version
+inout.c:		    && !memcmp(old->mpath[j].ip_public,
+inout.c:			       new->mpath[i].ip_public, SIZE_IN6ADDR)
+inout.c:		    && !memcmp(old->mpath[j].ip_remote,
+inout.c:			       new->mpath[i].ip_remote, SIZE_IN6ADDR))
+inout.c:	if (j < old->path_count) {
+inout.c:        if(memcmp(null_gw, new->mpath[i].ip_gw, sizeof(null_gw))) {
+inout.c:            (old->mpath[j].ip_gw, new->mpath[i].ip_gw,
+inout.c:             sizeof(old->mpath[j].ip_gw))) {
+inout.c:                memcpy(old->mpath[j].ip_gw, new->mpath[i].ip_gw,
+inout.c:                       sizeof(old->mpath[j].ip_gw));
+inout.c://		(old->mpath[j].mac_local, new->mpath[i].mac_local,
+inout.c://		 sizeof(old->mpath[j].mac_local))) {
+inout.c://		memcpy(old->mpath[j].mac_local, new->mpath[i].mac_local,
+inout.c://		       sizeof(old->mpath[j].mac_local));
+inout.c://		(old->mpath[j].mac_gw, new->mpath[i].mac_gw,
+inout.c://		 sizeof(old->mpath[j].mac_gw))) {
+inout.c://		memcpy(old->mpath[j].mac_gw, new->mpath[i].mac_gw,
+inout.c://		       sizeof(old->mpath[j].mac_gw));
+inout.c:       if(old->mpath[j].packet_max != new->mpath[i].packet_max) {
+inout.c:       old->mpath[j].packet_max = new->mpath[i].packet_max;
+inout.c:	    if (old->mpath[j].weight_in != new->mpath[i].weight_in) {
+inout.c:		old->mpath[j].weight_in = new->mpath[i].weight_in;
+inout.c:	    if (old->mpath[j].weight_out != new->mpath[i].weight_out) {
+inout.c:		old->mpath[j].weight_out = new->mpath[i].weight_out;
+inout.c:        if (old->mpath[j].keepalive != new->mpath[i].keepalive) {
+inout.c:        old->mpath[j].keepalive = new->mpath[i].keepalive;
+inout.c:        if (old->mpath[j].deadtimer != new->mpath[i].deadtimer) {
+inout.c:        old->mpath[j].deadtimer = new->mpath[i].deadtimer;
+inout.c:	    if (old->mpath[j].status != new->mpath[i].status) {
+inout.c:		//path_change_status(old, j, new->mpath[i].status);
+inout.c:	    if (strcmp(old->mpath[j].interface, new->mpath[i].interface)) {
+inout.c:		//interface_change_status(old->mpath[j].interface, STAT_IF_DOWN);
+inout.c:		strncpy(old->mpath[j].interface, new->mpath[i].interface,
+inout.c:		// //interface_change_status(old->mpath[j].interface, STAT_OK); // tunnel_read_pthread megcsinalja
+inout.c:	    int oldstatus = old->mpath[j].status;
+inout.c:	    memcpy(&(old->mpath[j]), &(new->mpath[i]), sizeof(path_type));
+inout.c:	    old->mpath[j].status = oldstatus;	// keep status
+inout.c:	    old->path_count++;
+inout.c:	    path_change_status(old, j, new->mpath[i].status);	// change status with path_change_status()
+inout.c:    for (i = 0; i < old->path_count; i++) {
+inout.c:	for (j = 0; j < new->path_count; j++) {
+inout.c:	    if (old->mpath[i].ip_version == 4) {
+inout.c:		if (old->mpath[i].ip_version == new->mpath[j].ip_version
+inout.c:		    && old->mpath[i].ip_public[3] ==
+inout.c:		    new->mpath[j].ip_public[3]
+inout.c:		    && old->mpath[i].ip_remote[3] ==
+inout.c:		    new->mpath[j].ip_remote[3])
+inout.c:		if (old->mpath[i].ip_version == new->mpath[j].ip_version
+inout.c:		    && !memcmp(old->mpath[i].ip_public,
+inout.c:			       new->mpath[j].ip_public, SIZE_IN6ADDR)
+inout.c:		    && !memcmp(old->mpath[i].ip_remote,
+inout.c:			       new->mpath[j].ip_remote, SIZE_IN6ADDR))
+inout.c:	if (j == new->path_count) {
+inout.c:	    for (j = i + 1; j < old->path_count; j++) {
+inout.c:		memcpy(&(old->mpath[j - 1]), &(old->mpath[j]),
+inout.c:		if (old->path_index > 0 && old->path_index == j)
+inout.c:		    old->path_index--;
+inout.c:	    old->path_count--;
+inout.c:	    i--;
+inout.c:	for (i = 0; i < old->path_count; i++) {
+inout.c:	    old->mpath[i].peer.sin6_port = htons(old->port_remote);
+inout.c:    if (conn->ip_version == 4) {
+inout.c:	cp = conn_search_ip(conn->ip_version, &(conn->ip_local[3]),
+inout.c:			    &(conn->ip_remote[3]), mp_global_conn);
+inout.c:	cp = conn_search_ip(conn->ip_version, conn->ip_local,
+inout.c:			    conn->ip_remote, mp_global_conn);
+inout.c:        set_ipstr(lipstr, cp->ip_local, cp->ip_version);
+inout.c:        set_ipstr(ripstr, cp->ip_remote, cp->ip_version);
+inout.c:	    printf("Connection changed: %s - %s:%i <=> %s:%i\n",
+inout.c:		   cp->filename, lipstr, cp->port_local, ripstr,
+inout.c:		   cp->port_remote);
+inout.c:    set_ipstr(lipstr, conn->ip_local, conn->ip_version);
+inout.c:    set_ipstr(ripstr, conn->ip_remote, conn->ip_version);
+inout.c:	printf("Connection added: %s - (%i) %s:%i <=> %s:%i\n",
+inout.c:	       new->filename, new->ip_version, lipstr, new->port_local,
+inout.c:	       ripstr, new->port_remote);
+inout.c:	    while (cp->next != NULL)
+inout.c:		cp = cp->next;
+inout.c:	    cp->next = new;
+inout.c:	    new->prev = cp;
+inout.c:    memcpy(&dst->name, src->name, sizeof(src->name));
+inout.c:    strcpy(dst->filename, src->filename);
+inout.c:    dst->path_count = src->path_count < dst->path_count ? src->path_count : dst->path_count;
+inout.c:    dst->status = src->status;
+inout.c:    dst->ip_version = src->ip_version;
+inout.c:    dst->auth_type = src->auth_type;
+inout.c:    memcpy(&dst->auth_key, &src->auth_key, keySize(src->auth_type));
+inout.c:    memcpy(dst->ip_local, src->ip_remote, SIZE_IN6ADDR);
+inout.c:    memcpy(dst->ip_remote, src->ip_local, SIZE_IN6ADDR);
+inout.c:    dst->port_local = src->port_remote;	/// @todo search new unused port and send it back to the client
+inout.c:    dst->port_remote = src->port_local;
+inout.c:    dst->cmd_port_remote = tun.cmd_port_rcv;
+inout.c:    dst->permission = 0;
+inout.c:    dst->permission |= (src->permission & 2) >> 1;	// receive -> send on other side
+inout.c:    dst->permission |= (src->permission & 1) << 1;	// send -> receive on other side
+inout.c:    for (i = 0; i < dst->path_count; i++) {
+inout.c:	memcpy(dst->mpath[i].ip_public, src->mpath[i].ip_remote,
+inout.c:	memcpy(dst->mpath[i].ip_remote, src->mpath[i].ip_public,
+inout.c:	dst->mpath[i].status = src->mpath[i].status;
+inout.c:	dst->mpath[i].ip_version = src->mpath[i].ip_version;
+inout.c:	dst->mpath[i].weight_in = src->mpath[i].weight_out;	// only symmetric connections
+inout.c:	dst->mpath[i].weight_out = src->mpath[i].weight_in;
+inout.c:    dst->mpath[i].keepalive = src->mpath[i].keepalive;
+inout.c:    dst->mpath[i].deadtimer = src->mpath[i].deadtimer;
+inout.c:    dst->mpath[i].packet_max = src->mpath[i].packet_max;
+inout.c:	dst->mpath[i].peer.sin6_family = AF_INET6;
+inout.c:	dst->mpath[i].peer.sin6_port = htons(dst->port_remote);
+inout.c:	memcpy(&dst->mpath[i].peer.sin6_addr, dst->mpath[i].ip_remote,
+inout.c:	memcpy(&dst->mpath[i].peer_cmd, &dst->mpath[i].peer,
+inout.c:	       sizeof(dst->mpath[i].peer));
+inout.c:	dst->mpath[i].peer_cmd.sin6_port = htons(dst->cmd_port_remote);
+inout.c:	// find interface -- the interface may not change
+inout.c:    //    if ((dst->mpath[i].ip_version == 4
+inout.c:	//  	 && dst->mpath[i].ip_public[3] == eth[j].ip4)
+inout.c:	//  	|| (dst->mpath[i].ip_version == 6
+inout.c:	//  	    && !memcmp(dst->mpath[i].ip_public, eth[j].ip6,
+inout.c:	//	strncpy(dst->mpath[i].interface, eth[j].name, 128);
+inout.c:    memcpy(&dst->name, peer->name, sizeof(peer->name));
+inout.c:    set_ipstr(ipstr, peer->ip_local, peer->ip_version);
+inout.c:    sprintf(dst->filename, "peer_%s.conf", ipstr);
+inout.c:    dst->permission = ctemplate->permission; //permisson keeps template value
+inout.c:    dst->ip_version = peer->ip_version;
+inout.c:    if (dst->ip_version == 4) {
+inout.c:        dst->ip_local[3] = tun.ip4;
+inout.c:        memcpy(dst->ip_local, tun.ip6, SIZE_IN6ADDR);
+inout.c:    dst->port_local = ctemplate->port_local;
+inout.c:    dst->cmd_port_local = tun.cmd_port_rcv;
+inout.c:    memcpy(dst->ip_remote, peer->ip_local, SIZE_IN6ADDR);
+inout.c:    dst->port_remote = peer->port_local;
+inout.c:    dst->cmd_port_remote = peer->cmd_port_local;
+inout.c:    // tpc = ctemplate->path_count;
+inout.c:    dst->path_count = peer->path_count < ctemplate->path_count ? peer->path_count : ctemplate->path_count;
+inout.c:    dst->network_count = (0 == peer->network_count ? 0 : 1) ;
+inout.c:    dst->status = ctemplate->status;
+inout.c:    dst->reorder_window = peer->reorder_window > ctemplate->reorder_window ? peer->reorder_window : ctemplate->reorder_window;
+inout.c:    dst->max_buffdelay = ctemplate->max_buffdelay;
+inout.c:    dst->auth_type = peer->auth_type;
+inout.c:    memcpy(&dst->auth_key, &peer->auth_key, keySize(peer->auth_type));
+inout.c:    for(i=0; i<dst->path_count; i++)
+inout.c:    {   ppath = &peer->mpath[i];
+inout.c:        ipv=ppath->ip_version;
+inout.c:        cpath = &ctemplate->mpath[i];
+inout.c:        dpath = &dst->mpath[i];
+inout.c:        dpath->ip_version = ipv;
+inout.c:            strcpy(dpath->interface, cpath->interface);
+inout.c:            memcpy(dpath->ip_private, cpath->ip_private, ips);
+inout.c:            memcpy(dpath->ip_public,  cpath->ip_public,  ips);
+inout.c:            memcpy(dpath->ip_gw,      cpath->ip_gw,      ips);
+inout.c:        memcpy(dpath->ip_remote, ppath->ip_public, ips);
+inout.c:        dpath->keepalive = ppath->keepalive;
+inout.c:        dpath->deadtimer = ppath->deadtimer;
+inout.c:        dpath->weight_out = ppath->weight_in;
+inout.c:        dpath->status = cpath->status;
+inout.c:    dst->networks[0].version = peer->ip_version;
+inout.c:    memset(dst->networks[0].source, 0, SIZE_IN6ADDR);
+inout.c:    dst->networks[0].source_prefix_length = 0;
+inout.c:    memcpy(dst->networks[0].destination, peer->ip_local, SIZE_IN6ADDR);
+inout.c:    if (peer->ip_version == 4) {
+inout.c:        dst->networks[0].destination_prefix_length = 32;
+inout.c:        dst->networks[0].destination_prefix_length = 128;
+inout.c:    p = conn->mpath;
+inout.c:    for (index = 0; index < conn->path_count; ++index, ++p) {
+inout.c:        p->peer.sin6_family = AF_INET6;
+inout.c:        p->peer.sin6_port = htons(conn->port_remote);
+inout.c:        memcpy(&p->peer.sin6_addr, p->ip_remote, SIZE_IN6ADDR);
+inout.c:    n = conn->networks;
+inout.c:    for (index = 0; index < conn->network_count; ++index, ++n) {
+inout.c:    strcpy(conn->name, read_str);
+inout.c:    conn->permission = iniparser_getint(conf, "connection:permission", 0);
+inout.c:    conn->ip_version = iniparser_getint(conf, "connection:ip_ver", 6);
+inout.c:    if (conn->ip_version == 6) {
+inout.c:	conn->ip_version = 4;
+inout.c:	conn->ip_local[2] = 0xFFFF0000;
+inout.c:	conn->ip_remote[2] = 0xFFFF0000;
+inout.c:    inet_pton(af, read_str, &(conn->ip_local[start]));
+inout.c:    conn->port_local = iniparser_getint(conf, "connection:local_port", 0);
+inout.c:    conn->cmd_port_local = iniparser_getint(conf, "connection:local_cmd_port", 65001);
+inout.c:    inet_pton(af, read_str, &(conn->ip_remote[start]));
+inout.c:    conn->port_remote =
+inout.c:    conn->cmd_port_remote =
+inout.c:    conn->path_count = iniparser_getint(conf, "connection:path_count", 0);
+inout.c:    conn->network_count =
+inout.c:    conn->status = iniparser_getint(conf, "connection:status", CONN_STAT_DOWN);
+inout.c:    conn->reorder_window = iniparser_getint(conf, "connection:reorder_window", 0);
+inout.c:    strcpy(conn->auth_key, read_str);
+inout.c:    conn->auth_type = iniparser_getint(conf, "connection:auth_type", 0);
+inout.c:    memset(&conn->max_buffdelay, 0, sizeof(struct timeval) );
+inout.c:    conn->max_buffdelay.tv_sec = iv / 1000;
+inout.c:    conn->max_buffdelay.tv_usec = (iv % 1000) *1000;
+inout.c:    strcpy(path->interface, read_str);
+inout.c:    path->ip_version = iniparser_getint(conf, conf_key, 0);
+inout.c://    mac_pton(read_str, (char *) path->mac_local);
+inout.c:    if (path->ip_version == 6) {
+inout.c:	path->ip_version = 4;
+inout.c:        path->ip_private[2] = 0xFFFF0000;
+inout.c:	path->ip_public[2] = 0xFFFF0000;
+inout.c:	path->ip_remote[2] = 0xFFFF0000;
+inout.c:	path->ip_gw[2] = 0xFFFF0000;
+inout.c:    inet_pton(af, read_str, &(path->ip_gw[start]));
+inout.c:    if (!strcmp(lipstr, "0.0.0.0")) getglobalip4(lipstr, path->interface, gwstrpoi);
+inout.c:    inet_pton(af, lipstr, &(path->ip_public[start]));
+inout.c:    if (!strcmp(lipstr, "0.0.0.0")) getprivateip4(lipstr, path->interface);
+inout.c:    inet_pton(af, lipstr, &(path->ip_private[start]));
+inout.c://    mac_pton(read_str, (char *) path->mac_gw);
+inout.c:    inet_pton(af, read_str, &(path->ip_remote[start]));
+inout.c:    path->keepalive = iniparser_getint(conf, conf_key, 5);
+inout.c:    path->deadtimer = iniparser_getint(conf, conf_key, 3*path->keepalive);
+inout.c:    path->weight_in = iniparser_getint(conf, conf_key, 1);
+inout.c:    path->weight_out = iniparser_getint(conf, conf_key, 1);
+inout.c:    path->packet_max = iniparser_getint(conf, conf_key, 1);
+inout.c:    path->status = iniparser_getint(conf, conf_key, 0);
+inout.c:    net->version = iniparser_getint(conf, conf_key, 4);
+inout.c:    version = (net->version == 4) ? AF_INET : AF_INET6;
+inout.c:    if (net->version == 4) {
+inout.c:	net->source[2] = 0xFFFF0000;
+inout.c:	net->destination[2] = 0xFFFF0000;
+inout.c:        sscanf(read_str,"%d", &net->source_prefix_length);
+inout.c:    inet_pton(version, lipstr, &net->source[offset]);
+inout.c:    net->destination_prefix_length = 0;
+inout.c:        sscanf(read_str,"%d", &net->destination_prefix_length);
+inout.c:    inet_pton(version, lipstr, &net->destination[offset]);
+interface.c: * Convert the MAC address string (':' or '-' byte delimiter) to binary form
+interface.c:	    *d = (c - 'A' + 10) << 4;
+interface.c:	    *d = (c - '0') << 4;
+interface.c:	    *d |= (c - 'A' + 10);
+interface.c:	    *d |= (c - '0');
+interface.c:	if ((*p == ':') || (*p == '-')) {
+interface.c:	for (i = 0; i < conn->path_count; i++) {
+interface.c:	    if (strcmp(interface, conn->mpath[i].interface) == 0) {
+interface.c:	conn = conn->next;
+interface.c:	for (i = 0; i < conn->path_count; i++) {
+interface.c://   int j; printf("\n"); for(j=0; j<4; j++) printf("%08X - %08X \n", conn->mpath[i].ip_local[j], addr[j]);
+interface.c:	    if (memcmp(addr, conn->mpath[i].ip_public, SIZE_IN6ADDR) == 0) {
+interface.c:	conn = conn->next;
+interface.c:    strcpy(tunp->device, "/dev/net/tun");
+interface.c:    tunp->cmd_port_rcv = local_cmdport;
+interface.c:    strcpy(tunp->interface, read_str);
+interface.c:// cmdport_local was moved to the general section - 2015.09.04
+interface.c://    tun->cmd_port_rcv = iniparser_getint(conf, conf_key, 65050);
+interface.c:    tunp->mtu = iniparser_getint(conf, conf_key, 1440);
+interface.c:    inet_pton(AF_INET, lstr, &tunp->ip4);
+interface.c:    tunp->ip4len = atoi(lstr);
+interface.c:    inet_pton(AF_INET6, lstr, &tunp->ip6);
+interface.c:    tunp->ip6len = atoi(lstr);
+thread.c:        blen = read(tun->fd, buff, 2048);
+thread.c:            pind = con->path_index;
+thread.c:            path = con->pathselectionlist[pind];
+thread.c:            while ((path->status != STAT_OK) && (c<2)) {
+thread.c:                if (pind >= con->pathselectionlength) { pind = pind % con->pathselectionlength; c++; }
+thread.c:                path = con->pathselectionlist[pind];
+thread.c:                printf("Packet can not be sent out from tunnel interface - no path has STAT_OK\n");
+thread.c:            if (check_interface( path->interface, path->socket )) { // int. up
+thread.c://                if (p->mpath[pind].status == STAT_IF_DOWN) {
+thread.c://    fprintf(stderr, "Interface %s could be changed state to UP.\n", p->mpath[pind].interface);
+thread.c:                if (path->status == STAT_OK) {
+thread.c:                    fprintf(stderr, "Interface %s changed state to DOWN.\n", con->mpath[pind].interface);
+thread.c:            sock = path->socket;
+thread.c:            saddr = (struct sockaddr *)&(path->peer);
+thread.c:            grelen = con->gre_length;
+thread.c:            greseq = con->conn_packet;
+thread.c:	        con->conn_packet++;
+thread.c:            pind = (pind + 1) % con->pathselectionlength;
+thread.c:            con->path_index = pind;
+thread.c:            if (con->reorder_window ) {
+thread.c:		        greseq_ptr = (bit_32 *)con->gre_header;
+thread.c:            memcpy(grebuff+(16-grelen), con->gre_header, grelen);
+thread.c:            sendto(sock, grebuff+(16-grelen), blen+grelen, 0, saddr, sizeof(struct sockaddr_in6));
+thread.c: * Each path has got its own socket_read_thread - 2015.08.20
+thread.c:    con = path->connection;
+thread.c:  //  setsockopt(path->socket, SOL_SOCKET,SO_RCVTIMEO,(char*)&rcv_timeout, sizeof(struct timeval));
+thread.c: //   grelen = conn->gre_length; // it should consider the checksum, key and seq. flags to calculate the length, but we do not use them now
+thread.c: //   if (con->reorder_window) setsockopt(path->socket, SOL_SOCKET,SO_RCVTIMEO,(char*)&con->max_buffdelay, sizeof(struct timeval));
+thread.c:        if (path->grebuffindex >= con->reorder_window) path->grebuffindex -= con->reorder_window;
+thread.c:        pgre = &path->grebuffarray[path->grebuffindex];
+thread.c:        blen = recvfrom(path->socket, pgre->buffer, sizeof(pgre->buffer), 0, (struct sockaddr *)&client, &client_size);
+thread.c:        gettimeofday(&pgre->timestamp, NULL);
+thread.c:        if ( (blen < 0) && (con->reorder_window) && (con->circlepackets) ) {
+thread.c:                    timeradd(&con->last_receive, &con->max_buffdelay, &tmptv);
+thread.c:                    if ( (con->circlepackets) && (timercmp(&tmptv, &pgre->timestamp, < )) ) {
+thread.c:        if(memcmp(&client.sin6_addr, path->ip_remote, SIZE_IN6ADDR) != 0) {
+thread.c:                      inet_ntop(AF_INET6, path->ip_remote, lipstr, 100);
+thread.c:                      printf("Got UDP %d bytes from bad client. IP6: %s (Required: %s)  Errno: %d Socket: %d\n", blen, ipstr, lipstr, errno, path->socket);
+thread.c:        if ( pgre->buffer[0] & 0x10 ) {
+thread.c:              greseq = (bit_32 *)(&pgre->buffer[4]) ;
+thread.c:        buff = pgre->buffer + grelen;
+thread.c:        if (greseq) pgre->seq = ntohl(greseq[0]); else pgre->seq = 0;
+thread.c:        pgre->grebufflen = blen;
+thread.c:        pgre->grelen = grelen;
+thread.c:        blen -= grelen;
+thread.c:// if ( (grelen == 8) && (pgre->seq != con->seq_start) )
+thread.c://      printf("Rcv Data,  Int: %s  GREseq:%d grebufflen:%d  grelen:%d   Waited seq:%d Type:%02X \n", path->interface, pgre->seq, pgre->grebufflen, pgre->grelen, con->seq_start, buff[0]);
+thread.c:           memcpy(&con->last_receive, &pgre->timestamp, sizeof(struct timeval));
+thread.c:           if ((!con->reorder_window) || (!greseq)) {
+thread.c:              write(tun.fd, &pgre->buffer[grelen], blen);
+thread.c:              if ((pgre->seq < con->seq_start) && (pgre->seq > 50)) { // lost packet arrived too late
+thread.c:                  DEBUG("Lost packet arrived too late. Seq: %d,  Start seq (waited for): %d \n", pgre->seq, con->seq_start);
+thread.c:              if ( (pgre->seq >= con->seq_start + con->reorder_window) || ((pgre->seq < con->seq_start ) && (pgre->seq <= 50)) ){ // this could be done witk substraction and unsigned comparison, so true even if pgre->seq < con->seq
+thread.c:                      if (pgre->seq >= con->seq_start + con->reorder_window)
+thread.c:                      printf("    Circle index: %d,  Start seq(waited for): %d,  Arrived seq: %d \n", con->circlestart, con->seq_start, pgre->seq);
+thread.c:                      con->seq_start = pgre->seq;
+thread.c:              cindex = con->circlestart + pgre->seq - con->seq_start;
+thread.c:              if (cindex >= con->circle_window) cindex -= con->circle_window;
+thread.c:              if ((con->circlebuff[cindex] ) && (con->circlebuff[cindex]->grebufflen) ) {
+thread.c:                      printf("Circulate reorder array overloaded with %d packets. Loosing packet (seq: %d ) \n", con->circlepackets + 1, pgre->seq);
+thread.c:              con->circlebuff[cindex] = pgre;
+thread.c:              con->circlepackets++;
+thread.c:// printf("Packet with greseq %d was placed into circlebuffer index:%d \n", pgre->seq, cindex);
+thread.c:              pcircle = con->circlebuff[con->circlestart]; //  The packet we are waiting for arrived, send it out
+thread.c://  if (pcircle) printf("cindex: %d, pcircle-grebufflen: %d, circlepackets: %d \n", cindex, pcircle->grebufflen, con->circlepackets );
+thread.c:              if (con->circlepackets >= con->circle_window) {
+thread.c:                       printf("Warning! Reorder window filled up: %d packets arrived. Sending out buffered packets. \n", con->circlepackets);
+thread.c:              if ( (con->circlepackets) && (pcircle) && (pcircle->grebufflen - grelen > 0))
+thread.c:              path->grebuffindex++;
+thread.c:              if (path->grebuffindex >= con->reorder_window) path->grebuffindex -= con->reorder_window;
+thread.c:              if (path->grebuffarray[path->grebuffindex].grebufflen) {
+thread.c:                      printf("Interface: %s Index: %d ; Clearing buffer.\n", path->interface, path->grebuffindex);
+thread.c:        else { pgre->grebufflen = 0;   // The CMD packet is in buff[] with length blen; we sign the buffer place as empty
+thread.c:                  if(memcmp(&client.sin6_addr, path->ip_remote, SIZE_IN6ADDR) == 0) {  //check if the keepalive came from the peer
+thread.c:                        path->last_keepalive = time(NULL);
+thread.c:                        if(path->status == STAT_PATH_DOWN) {
+thread.c:                            if (path->ip_version == 6) {
+thread.c:                                  inet_ntop(AF_INET6, path->ip_remote, ripstr, 128);
+thread.c:                                  inet_ntop(AF_INET6, path->ip_public, lipstr, 128);
+thread.c:                                  inet_ntop(AF_INET, &path->ip_remote[3], ripstr, 128);
+thread.c:                                  inet_ntop(AF_INET, &path->ip_public[3], lipstr, 128);
+thread.c:                            path->status = STAT_OK;
+thread.c:                            path->last_keepalive = time(NULL);
+thread.c:                            fprintf(stderr, "Path status changed to 0x%02X (%s -> %s) \n", STAT_OK, lipstr, ripstr);
+thread.c:        if (con->reorder_window) {
+thread.c:              if (con->circlepackets) {
+thread.c:                   cind = con->circlestart -1;
+thread.c:                   if (cind<0) cind += con->circle_window;
+thread.c:                   while (cind != con->circlestart) {
+thread.c:                      grebuf = con->circlebuff[cind];
+thread.c:                           timeradd(&grebuf->timestamp, &con->max_buffdelay, &tmptv);
+thread.c:                               break; // found a packet which is too old - findex shows tha (place +1) in circlebuff
+thread.c:                      if (!cind) cind = con->circle_window;
+thread.c:                      cind--;
+thread.c:                   } // cind != con->circlestart
+thread.c:                   if (findex) { // do the work. have to send out all the packets before (findex -1)
+thread.c:                          findex--;
+thread.c:DEBUG("circulatebuffer_handler: Too old packet at index %d (GRE Seq: %d)\n", findex, con->circlebuff[findex]->seq);
+thread.c:                          np = con->circlepackets;
+thread.c:                          tmpgre = con->circlebuff[findex];
+thread.c:                          tmplen = tmpgre->grebufflen;
+thread.c:                          tmpgre->grebufflen = 0; // turn off temporary the packet in findex position
+thread.c:                          cind = con->circlestart;
+thread.c:                          lostp = tmpgre->seq - con->seq_start;
+thread.c:                                grebuf = con->circlebuff[cind];
+thread.c:                                if ((grebuf) && (grebuf->grebufflen)) {
+thread.c:                                     con->circlestart = cind;
+thread.c:                                if (cind >= con->circle_window) cind -= con->circle_window;
+thread.c:                          tmpgre->grebufflen = tmplen; // the findex packet is active again
+thread.c:                          con->circlestart = findex;
+thread.c:                          lostp -= (np - con->circlepackets);
+thread.c:DEBUG("circulatebuffer_handler:       sent out %d packets; lost %d packets.\n", np-con->circlepackets, lostp);
+thread.c:              }  // ic con->circle_packets
+thread.c:        } // if con->reorder_window
+thread.c:                    for(i=0; i<cp->path_count; i++) {
+thread.c:                        if(cp->mpath[i].last_keepalive == 0) cp->mpath[i].last_keepalive = time(NULL); // allow some converge time after startup
+thread.c:                        else if(cp->mpath[i].deadtimer > 0 && cp->mpath[i].last_keepalive + cp->mpath[i].deadtimer < time(NULL) &&
+thread.c:                           cp->mpath[i].status == STAT_OK) {
+thread.c:                    cp = cp->next;
+thread.c:                else sprintf(lbuff+4, "CMD-ERROR:%s", dbuff);
+thread.c:                    for(i=0; i<cp->path_count; i++) {
+thread.c:                        if(memcmp(&client.sin6_addr, cp->mpath[i].ip_remote, SIZE_IN6ADDR) == 0) {
+thread.c:                            cp->mpath[i].last_keepalive = time(NULL);
+thread.c:                            if(cp->mpath[i].status == STAT_PATH_DOWN) {
+thread.c: //  char lipstr[128]; inet_ntop(AF_INET6, cp->ip_remote, lipstr, 128);
+thread.c:                    cp->ip_version = buff[sh+5];
+thread.c:                    memcpy(cp->ip_local,  &buff[sh+24], SIZE_IN6ADDR);
+thread.c:                    memcpy(cp->ip_remote, &buff[sh+ 8], SIZE_IN6ADDR);
+thread.c:        DEBUG("New connection is set from data received ver %d \n", cp->ip_version);
+thread.c:                if (cp->waitround == 0 && buff[sh+4]>1) {
+thread.c:                if(cp->waitround > 0 && buff[sh+4] > cp->waitround) {
+thread.c:                        fprintf(stderr, "Cannot receive round %d more than expected (%d)\n", buff[sh+4], cp->waitround);
+thread.c:                buff[sh+4] += 1; i = 0; ret = -1;
+thread.c:                    cp->waitround = buff[sh+4] + 1;
+thread.c: * Each path has its own keepalive_send_thread - 2015.08.31.
+thread.c:    conn = (connection_type *)path->connection;
+thread.c:    grelen = conn->gre_length;
+thread.c:    sleeptime = path->keepalive;
+thread.c:    cmdbuf[5] = conn->ip_version;
+thread.c:    memcpy(&cmdbuf[8], conn->ip_local, SIZE_IN6ADDR);
+thread.c:    memcpy(&cmdbuf[24], conn->ip_remote, SIZE_IN6ADDR);
+thread.c:    memcpy(grecmdbuf, conn->gre_header, grelen);
+thread.c:    memcpy(&saddr, &path->peer, socksize);
+thread.c:    sock = path->socket;
+thread.c:    set_ipstr(ipstr, path->ip_remote, path->ip_version);
+thread.c:                if ( (path->status == STAT_PATH_DOWN) || (path->status == STAT_OK) ) {
+thread.c:                        slen = sendto(sock, grecmdbuf, blen, 0, (struct sockaddr *)&path->peer, socksize);
+thread.c:                        DEBUG("Sent keepalive for conn %s; to peer: %s (slen: %d, errno: %d)\n", conn->name, ipstr, slen, errno);
+trim.c: * @brief Public domain implementations of in-place string trim functions
+trim.c: * @author Michael Burr michael.burr@nth-element.com
+trim.c:    // newstart points to first non-whitespace char (which might be '\0')
+trim.c:    // find the last non-whitespace character
+trim.c:    while ((end != s) && isspace( *(end-1))) {
+trim.c:            --end;
+trim.c:    //      end points just past the last non-whitespace character (it might point
+tunnel.c:    //int mtu = 1420; // 1500-sizeof(IPv6+UDP+GRE header)
+tunnel.c:    strcpy(tunp->device, "/dev/net/tun");
+tunnel.c:    if ((tunp->fd = open(tunp->device, O_RDWR)) < 0)
+tunnel.c:    ifr.ifr_flags = IFF_TUN | IFF_NO_PI;  // for tun (point-to-point) interface
+tunnel.c:    strncpy(ifr.ifr_name, tunp->interface, IFNAMSIZ);
+tunnel.c:    if (ioctl(tunp->fd, TUNSETIFF, (void *) &ifr) < 0) {
+tunnel.c:        if (ioctl(tunp->fd, OTUNSETIFF, (void *) &ifr) < 0) {
+tunnel.c:            close(tunp->fd);
+tunnel.c:        	strcpy(ifr.ifr_name, tunp->interface);
+tunnel.c:                fprintf(stderr, "Tunnel interface qlen IOCTL error - %d.", errno);
+tunnel.c:    if (tunp->ip4len) {
+tunnel.c:        inet_ntop(AF_INET, &tunp->ip4, ipstr, 255);
+tunnel.c:	        tunp->interface, ipstr, tunp->ip4len, tunp->mtu);
+tunnel.c:    if (tunp->ip6len ) {
+tunnel.c:        inet_ntop(AF_INET6, &tunp->ip6, ipstr, 255);
+tunnel.c:	        tunp->interface, ipstr, tunp->ip6len, tunp->mtu);
+tunnel.c:    pthread_create(&tunp->tunnel_read, NULL,   tunnel_read_thread , tunp);
+tunnel.c:    pthread_create(&tunp->cmd_read, NULL,   cmd_read_thread , NULL);
+tunnel.c:    return(tunp->fd);
+tunnel.c:    sockaddr6.sin6_port   = htons(tunp->cmd_port_rcv); // ************* CMD server socket
+tunnel.c:    if (tunp->cmd_port_rcv == 0) { // The port number was not known.
+tunnel.c:            tunp->cmd_port_rcv = ntohs(sockaddr6.sin6_port);
+tunnel.c:    tunp->cmd_socket_rcv = sock6;
+tunnel.c://    sockaddr6.sin6_port   = htons(tun->cmd_port_snd); // ************* CMD client socket
+tunnel.c://    if (tun->cmd_port_snd == 0) { // The port number was not known.
+tunnel.c://            tun->cmd_port_snd = ntohs(sockaddr6.sin6_port);
+tunnel.c://    tun->cmd_socket_snd = sock6;
+tunnel.c:    pthread_cancel(tunp->tunnel_read);
+tunnel.c:    pthread_cancel(tunp->cmd_read);
+tunnel.c:    close(tunp->cmd_socket_rcv);
+tunnel.c://    close(tun->cmd_socket_snd);
+tunnel.c:    return close(tunp->fd);

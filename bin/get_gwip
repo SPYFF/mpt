@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Usage: get_gwip { Interface  | Interface_IP }
+
+if [ $# -eq 1 ]; then
+   CH=`echo $1 | cut -c 1`
+   NUM=`echo "123456789" | grep $CH | wc -l`
+   if [ $NUM -eq 1 ]; then
+        INTERFACE_IP=$1
+   else
+        INTERFACE_IP=`ip addr show dev $1 | grep "inet " | cut -d/ -f1 | cut -dt -f2`
+   fi
+else
+  exit 1
+fi
+# echo $INTERFACE_IP
+
+
+nmcli -f IP4 dev list | grep "ip =" | grep $INTERFACE_IP  | cut -d= -f3 |  head -1
+

@@ -1,0 +1,84 @@
+\hypertarget{tunnel_8c}{\section{/\-Users/kiskele/\-Dropbox/suli/mptcp/source/src/mptlib/tunnel.c File Reference}
+\label{tunnel_8c}\index{/\-Users/kiskele/\-Dropbox/suli/mptcp/source/src/mptlib/tunnel.\-c@{/\-Users/kiskele/\-Dropbox/suli/mptcp/source/src/mptlib/tunnel.\-c}}
+}
+
+
+Tunnel handling functions.  
+
+
+{\ttfamily \#include \char`\"{}multipath.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}mp\-\_\-local.\-h\char`\"{}}\\*
+Include dependency graph for tunnel.\-c\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{tunnel_8c__incl}
+\end{center}
+\end{figure}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{tunnel_8c_ab3de656908348a477ef4b2109ec0289d}{\#define {\bfseries O\-T\-U\-N\-S\-E\-T\-I\-F\-F}~(('T'$<$$<$ 8) $|$ 202)}\label{tunnel_8c_ab3de656908348a477ef4b2109ec0289d}
+
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{tunnel_8c_a054a3e1dd3bd936c3e4cd5c5e9876fe0}{tunnel\-\_\-start} (\hyperlink{multipath_8h_ad7a0156e1890c65de09911a138792f6e}{tunnel\-\_\-type} $\ast$\hyperlink{mp__local_8h_a5177b995bc2060be2efb1d21496d1971}{tun})
+\item 
+int \hyperlink{tunnel_8c_aa5f3a4c2c65b76f72d1e203ead2f593e}{cmd\-\_\-open\-\_\-socket} (\hyperlink{multipath_8h_ad7a0156e1890c65de09911a138792f6e}{tunnel\-\_\-type} $\ast$\hyperlink{mp__local_8h_a5177b995bc2060be2efb1d21496d1971}{tun})
+\item 
+int \hyperlink{tunnel_8c_aaf277918c024742ecabe2f367c750fd1}{tunnel\-\_\-stop} (\hyperlink{multipath_8h_ad7a0156e1890c65de09911a138792f6e}{tunnel\-\_\-type} $\ast$\hyperlink{mp__local_8h_a5177b995bc2060be2efb1d21496d1971}{tun})
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Tunnel handling functions. \begin{DoxyAuthor}{Author}
+Almasi, Bela; Debrecen, Hungary 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+2012.\-08.\-15. 
+\end{DoxyDate}
+\begin{DoxyCopyright}{Copyright}
+Project maintained by Almasi, Bela; Debrecen, Hungary 
+\end{DoxyCopyright}
+
+
+Definition in file \hyperlink{tunnel_8c_source}{tunnel.\-c}.
+
+
+
+\subsection{Function Documentation}
+\hypertarget{tunnel_8c_aa5f3a4c2c65b76f72d1e203ead2f593e}{\index{tunnel.\-c@{tunnel.\-c}!cmd\-\_\-open\-\_\-socket@{cmd\-\_\-open\-\_\-socket}}
+\index{cmd\-\_\-open\-\_\-socket@{cmd\-\_\-open\-\_\-socket}!tunnel.c@{tunnel.\-c}}
+\subsubsection[{cmd\-\_\-open\-\_\-socket}]{\setlength{\rightskip}{0pt plus 5cm}int cmd\-\_\-open\-\_\-socket (
+\begin{DoxyParamCaption}
+\item[{{\bf tunnel\-\_\-type} $\ast$}]{tun}
+\end{DoxyParamCaption}
+)}}\label{tunnel_8c_aa5f3a4c2c65b76f72d1e203ead2f593e}
+Open and bind the cmd socket 
+
+Definition at line 79 of file tunnel.\-c.
+
+\hypertarget{tunnel_8c_a054a3e1dd3bd936c3e4cd5c5e9876fe0}{\index{tunnel.\-c@{tunnel.\-c}!tunnel\-\_\-start@{tunnel\-\_\-start}}
+\index{tunnel\-\_\-start@{tunnel\-\_\-start}!tunnel.c@{tunnel.\-c}}
+\subsubsection[{tunnel\-\_\-start}]{\setlength{\rightskip}{0pt plus 5cm}int tunnel\-\_\-start (
+\begin{DoxyParamCaption}
+\item[{{\bf tunnel\-\_\-type} $\ast$}]{tun}
+\end{DoxyParamCaption}
+)}}\label{tunnel_8c_a054a3e1dd3bd936c3e4cd5c5e9876fe0}
+Open and config the tunnel interface 
+
+Definition at line 18 of file tunnel.\-c.
+
+\hypertarget{tunnel_8c_aaf277918c024742ecabe2f367c750fd1}{\index{tunnel.\-c@{tunnel.\-c}!tunnel\-\_\-stop@{tunnel\-\_\-stop}}
+\index{tunnel\-\_\-stop@{tunnel\-\_\-stop}!tunnel.c@{tunnel.\-c}}
+\subsubsection[{tunnel\-\_\-stop}]{\setlength{\rightskip}{0pt plus 5cm}int tunnel\-\_\-stop (
+\begin{DoxyParamCaption}
+\item[{{\bf tunnel\-\_\-type} $\ast$}]{tun}
+\end{DoxyParamCaption}
+)}}\label{tunnel_8c_aaf277918c024742ecabe2f367c750fd1}
+Stop and close the tunnel device 
+
+Definition at line 131 of file tunnel.\-c.
+

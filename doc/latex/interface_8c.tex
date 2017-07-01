@@ -1,0 +1,123 @@
+\hypertarget{interface_8c}{\section{/\-Users/kiskele/\-Dropbox/suli/mptcp/source/src/mptlib/interface.c File Reference}
+\label{interface_8c}\index{/\-Users/kiskele/\-Dropbox/suli/mptcp/source/src/mptlib/interface.\-c@{/\-Users/kiskele/\-Dropbox/suli/mptcp/source/src/mptlib/interface.\-c}}
+}
+
+
+Basic operations on an interface.  
+
+
+{\ttfamily \#include \char`\"{}multipath.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}mp\-\_\-local.\-h\char`\"{}}\\*
+Include dependency graph for interface.\-c\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{interface_8c__incl}
+\end{center}
+\end{figure}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{interface_8c_a9048244ea0041c5239505db3961d2a1b}{mac\-\_\-pton} (char $\ast$src, char $\ast$dst)
+\item 
+int \hyperlink{interface_8c_a6ae146a6151ff6df02ce01d679d34041}{check\-\_\-loopback} (char $\ast$address)
+\item 
+void \hyperlink{interface_8c_aff0f41f29b42f2e3b6ea2d479a1ec448}{interface\-\_\-change\-\_\-status} (char $\ast$interface, bit\-\_\-8 status)
+\item 
+void \hyperlink{interface_8c_a4b11a913e2156ff892f6601f38cf0ae8}{address\-\_\-change\-\_\-status} (bit\-\_\-32 $\ast$addr, bit\-\_\-8 status)
+\item 
+int \hyperlink{interface_8c_a006b7e907de91c8a393c1716b0308917}{check\-\_\-interface} (char $\ast$interface, int sock)
+\item 
+void \hyperlink{interface_8c_aaee400b4ef800bf1d289d11cf7737f47}{interface\-\_\-load} (char $\ast$filename, \hyperlink{multipath_8h_ad7a0156e1890c65de09911a138792f6e}{tunnel\-\_\-type} $\ast$\hyperlink{mp__local_8h_a5177b995bc2060be2efb1d21496d1971}{tun}, \hyperlink{multipath_8h_a33e3a32d09de77fbf0e03597b8704196}{interface\-\_\-type} $\ast$interface)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Basic operations on an interface. \begin{DoxyAuthor}{Author}
+Almasi, Bela; Debrecen, Hungary 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+2012.\-08.\-15. 
+\end{DoxyDate}
+\begin{DoxyCopyright}{Copyright}
+Project maintained by Almasi, Bela; Debrecen, Hungary 
+\end{DoxyCopyright}
+
+
+Definition in file \hyperlink{interface_8c_source}{interface.\-c}.
+
+
+
+\subsection{Function Documentation}
+\hypertarget{interface_8c_a4b11a913e2156ff892f6601f38cf0ae8}{\index{interface.\-c@{interface.\-c}!address\-\_\-change\-\_\-status@{address\-\_\-change\-\_\-status}}
+\index{address\-\_\-change\-\_\-status@{address\-\_\-change\-\_\-status}!interface.c@{interface.\-c}}
+\subsubsection[{address\-\_\-change\-\_\-status}]{\setlength{\rightskip}{0pt plus 5cm}void address\-\_\-change\-\_\-status (
+\begin{DoxyParamCaption}
+\item[{bit\-\_\-32 $\ast$}]{addr, }
+\item[{bit\-\_\-8}]{status}
+\end{DoxyParamCaption}
+)}}\label{interface_8c_a4b11a913e2156ff892f6601f38cf0ae8}
+Change the path status for all path of the address 
+
+Definition at line 80 of file interface.\-c.
+
+\hypertarget{interface_8c_a006b7e907de91c8a393c1716b0308917}{\index{interface.\-c@{interface.\-c}!check\-\_\-interface@{check\-\_\-interface}}
+\index{check\-\_\-interface@{check\-\_\-interface}!interface.c@{interface.\-c}}
+\subsubsection[{check\-\_\-interface}]{\setlength{\rightskip}{0pt plus 5cm}int check\-\_\-interface (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{interface, }
+\item[{int}]{sock}
+\end{DoxyParamCaption}
+)}}\label{interface_8c_a006b7e907de91c8a393c1716b0308917}
+Check the status of an interface, value 1 means U\-P 
+
+Definition at line 101 of file interface.\-c.
+
+\hypertarget{interface_8c_a6ae146a6151ff6df02ce01d679d34041}{\index{interface.\-c@{interface.\-c}!check\-\_\-loopback@{check\-\_\-loopback}}
+\index{check\-\_\-loopback@{check\-\_\-loopback}!interface.c@{interface.\-c}}
+\subsubsection[{check\-\_\-loopback}]{\setlength{\rightskip}{0pt plus 5cm}int check\-\_\-loopback (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{address}
+\end{DoxyParamCaption}
+)}}\label{interface_8c_a6ae146a6151ff6df02ce01d679d34041}
+Check if the address is loopback (Ret. 1=yes) 
+
+Definition at line 47 of file interface.\-c.
+
+\hypertarget{interface_8c_aff0f41f29b42f2e3b6ea2d479a1ec448}{\index{interface.\-c@{interface.\-c}!interface\-\_\-change\-\_\-status@{interface\-\_\-change\-\_\-status}}
+\index{interface\-\_\-change\-\_\-status@{interface\-\_\-change\-\_\-status}!interface.c@{interface.\-c}}
+\subsubsection[{interface\-\_\-change\-\_\-status}]{\setlength{\rightskip}{0pt plus 5cm}void interface\-\_\-change\-\_\-status (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{interface, }
+\item[{bit\-\_\-8}]{status}
+\end{DoxyParamCaption}
+)}}\label{interface_8c_aff0f41f29b42f2e3b6ea2d479a1ec448}
+Change the path status for all path of the intercace 
+
+Definition at line 61 of file interface.\-c.
+
+\hypertarget{interface_8c_aaee400b4ef800bf1d289d11cf7737f47}{\index{interface.\-c@{interface.\-c}!interface\-\_\-load@{interface\-\_\-load}}
+\index{interface\-\_\-load@{interface\-\_\-load}!interface.c@{interface.\-c}}
+\subsubsection[{interface\-\_\-load}]{\setlength{\rightskip}{0pt plus 5cm}void interface\-\_\-load (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{filename, }
+\item[{{\bf tunnel\-\_\-type} $\ast$}]{tun, }
+\item[{{\bf interface\-\_\-type} $\ast$}]{interface}
+\end{DoxyParamCaption}
+)}}\label{interface_8c_aaee400b4ef800bf1d289d11cf7737f47}
+Load the data of the interfaces from a file 
+
+Definition at line 116 of file interface.\-c.
+
+\hypertarget{interface_8c_a9048244ea0041c5239505db3961d2a1b}{\index{interface.\-c@{interface.\-c}!mac\-\_\-pton@{mac\-\_\-pton}}
+\index{mac\-\_\-pton@{mac\-\_\-pton}!interface.c@{interface.\-c}}
+\subsubsection[{mac\-\_\-pton}]{\setlength{\rightskip}{0pt plus 5cm}void mac\-\_\-pton (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{src, }
+\item[{char $\ast$}]{dst}
+\end{DoxyParamCaption}
+)}}\label{interface_8c_a9048244ea0041c5239505db3961d2a1b}
+Convert the M\-A\-C address string ('\-:' or '-\/' byte delimiter) to binary form 
+
+Definition at line 15 of file interface.\-c.
+

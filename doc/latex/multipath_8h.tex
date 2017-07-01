@@ -1,0 +1,354 @@
+\hypertarget{multipath_8h}{\section{/\-Users/kiskele/\-Dropbox/suli/mptcp/source/src/include/multipath.h File Reference}
+\label{multipath_8h}\index{/\-Users/kiskele/\-Dropbox/suli/mptcp/source/src/include/multipath.\-h@{/\-Users/kiskele/\-Dropbox/suli/mptcp/source/src/include/multipath.\-h}}
+}
+
+
+M\-P\-T Data structures.  
+
+
+{\ttfamily \#include $<$unistd.\-h$>$}\\*
+{\ttfamily \#include $<$fcntl.\-h$>$}\\*
+{\ttfamily \#include $<$stdlib.\-h$>$}\\*
+{\ttfamily \#include $<$stdio.\-h$>$}\\*
+{\ttfamily \#include $<$ctype.\-h$>$}\\*
+{\ttfamily \#include $<$string.\-h$>$}\\*
+{\ttfamily \#include $<$syslog.\-h$>$}\\*
+{\ttfamily \#include $<$errno.\-h$>$}\\*
+{\ttfamily \#include $<$sys/ioctl.\-h$>$}\\*
+{\ttfamily \#include $<$net/if.\-h$>$}\\*
+{\ttfamily \#include $<$linux/if\-\_\-tun.\-h$>$}\\*
+{\ttfamily \#include $<$arpa/inet.\-h$>$}\\*
+{\ttfamily \#include $<$sys/socket.\-h$>$}\\*
+{\ttfamily \#include $<$netinet/in.\-h$>$}\\*
+{\ttfamily \#include $<$pthread.\-h$>$}\\*
+Include dependency graph for multipath.\-h\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{multipath_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{multipath_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structpath__struct}{path\-\_\-struct}
+\begin{DoxyCompactList}\small\item\em Data structure of a single path in a connection. \end{DoxyCompactList}\item 
+struct \hyperlink{structconnection__struct}{connection\-\_\-struct}
+\begin{DoxyCompactList}\small\item\em Data structure of a connection. \end{DoxyCompactList}\item 
+struct \hyperlink{structtunnel__struct}{tunnel\-\_\-struct}
+\begin{DoxyCompactList}\small\item\em Data structure of tunnel interface. \end{DoxyCompactList}\item 
+struct \hyperlink{structinterface__struct}{interface\-\_\-struct}
+\begin{DoxyCompactList}\small\item\em Data structure of physical interface. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{multipath_8h_a29665124c99ec1945a1d59a50469e770}{\#define {\bfseries bit\-\_\-64}~uint64\-\_\-t}\label{multipath_8h_a29665124c99ec1945a1d59a50469e770}
+
+\item 
+\hypertarget{multipath_8h_ae2811389fe785b9b7837dc7c3de2f878}{\#define {\bfseries bit\-\_\-32}~uint32\-\_\-t}\label{multipath_8h_ae2811389fe785b9b7837dc7c3de2f878}
+
+\item 
+\hypertarget{multipath_8h_a463efe6ee79d0d3957df2e7022c0910a}{\#define {\bfseries bit\-\_\-16}~uint16\-\_\-t}\label{multipath_8h_a463efe6ee79d0d3957df2e7022c0910a}
+
+\item 
+\hypertarget{multipath_8h_ae7ec748ed3f2f8047bdb83c4ad3ff9a9}{\#define {\bfseries bit\-\_\-8}~uint8\-\_\-t}\label{multipath_8h_ae7ec748ed3f2f8047bdb83c4ad3ff9a9}
+
+\item 
+\hypertarget{multipath_8h_ab99ded389af74001a6298fc9e44e74e5}{\#define \hyperlink{multipath_8h_ab99ded389af74001a6298fc9e44e74e5}{M\-A\-X\-\_\-\-P\-A\-T\-H}~25}\label{multipath_8h_ab99ded389af74001a6298fc9e44e74e5}
+
+\begin{DoxyCompactList}\small\item\em M\-A\-X\-\_\-\-P\-A\-T\-H -\/ the maximum number of paths per connection. \end{DoxyCompactList}\item 
+\hypertarget{multipath_8h_abb70478317e07dfd48fb83ae43612a63}{\#define \hyperlink{multipath_8h_abb70478317e07dfd48fb83ae43612a63}{M\-A\-X\-\_\-\-I\-N\-T\-N\-U\-M}~10}\label{multipath_8h_abb70478317e07dfd48fb83ae43612a63}
+
+\begin{DoxyCompactList}\small\item\em M\-A\-X\-\_\-\-I\-N\-T\-N\-U\-M -\/ the maximum number of network interfaces. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{multipath_8h_aeef42a0780e3248ffc87c4dfa7d30213}{typedef struct \hyperlink{structpath__struct}{path\-\_\-struct} \hyperlink{multipath_8h_aeef42a0780e3248ffc87c4dfa7d30213}{path\-\_\-type}}\label{multipath_8h_aeef42a0780e3248ffc87c4dfa7d30213}
+
+\begin{DoxyCompactList}\small\item\em Data structure of a single path in a connection. \end{DoxyCompactList}\item 
+\hypertarget{multipath_8h_a8fd58c5c9a4f2463735bc00b930e3b05}{typedef struct \hyperlink{structconnection__struct}{connection\-\_\-struct} \hyperlink{multipath_8h_a8fd58c5c9a4f2463735bc00b930e3b05}{connection\-\_\-type}}\label{multipath_8h_a8fd58c5c9a4f2463735bc00b930e3b05}
+
+\begin{DoxyCompactList}\small\item\em Data structure of a connection. \end{DoxyCompactList}\item 
+\hypertarget{multipath_8h_ad7a0156e1890c65de09911a138792f6e}{typedef struct \hyperlink{structtunnel__struct}{tunnel\-\_\-struct} \hyperlink{multipath_8h_ad7a0156e1890c65de09911a138792f6e}{tunnel\-\_\-type}}\label{multipath_8h_ad7a0156e1890c65de09911a138792f6e}
+
+\begin{DoxyCompactList}\small\item\em Data structure of tunnel interface. \end{DoxyCompactList}\item 
+\hypertarget{multipath_8h_a33e3a32d09de77fbf0e03597b8704196}{typedef struct \hyperlink{structinterface__struct}{interface\-\_\-struct} \hyperlink{multipath_8h_a33e3a32d09de77fbf0e03597b8704196}{interface\-\_\-type}}\label{multipath_8h_a33e3a32d09de77fbf0e03597b8704196}
+
+\begin{DoxyCompactList}\small\item\em Data structure of physical interface. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{multipath_8h_ae2a3f60a5f5162153d6c912af13f8941}{interface\-\_\-load} (char $\ast$, \hyperlink{multipath_8h_ad7a0156e1890c65de09911a138792f6e}{tunnel\-\_\-type} $\ast$, \hyperlink{multipath_8h_a33e3a32d09de77fbf0e03597b8704196}{interface\-\_\-type} $\ast$)
+\item 
+int \hyperlink{multipath_8h_ae425603a047bc20a753d7cb672fdb1c8}{tunnel\-\_\-start} (\hyperlink{multipath_8h_ad7a0156e1890c65de09911a138792f6e}{tunnel\-\_\-type} $\ast$)
+\item 
+void \hyperlink{multipath_8h_a30656efc3c445822fa11f1df3e96ccaa}{tunnel\-\_\-print} (\hyperlink{multipath_8h_ad7a0156e1890c65de09911a138792f6e}{tunnel\-\_\-type} $\ast$)
+\item 
+int \hyperlink{multipath_8h_a117f9056196ddf2a891622e3395e32f9}{tunnel\-\_\-stop} (\hyperlink{multipath_8h_ad7a0156e1890c65de09911a138792f6e}{tunnel\-\_\-type} $\ast$)
+\item 
+void \hyperlink{multipath_8h_a0c7ab3e528df6f61ccbbce749d081cc9}{conn\-\_\-start} (\hyperlink{multipath_8h_a8fd58c5c9a4f2463735bc00b930e3b05}{connection\-\_\-type} $\ast$)
+\item 
+void \hyperlink{multipath_8h_a7d604805a7e403f53c3b4d64b9f6cc36}{conn\-\_\-print} (\hyperlink{multipath_8h_a8fd58c5c9a4f2463735bc00b930e3b05}{connection\-\_\-type} $\ast$)
+\item 
+void \hyperlink{multipath_8h_af999625cd9461755cb71499714ce55ba}{conn\-\_\-stop} (\hyperlink{multipath_8h_a8fd58c5c9a4f2463735bc00b930e3b05}{connection\-\_\-type} $\ast$)
+\item 
+void \hyperlink{multipath_8h_ab19d4d284ad3fb61da6bc09a0976fc66}{conn\-\_\-save} (char $\ast$, \hyperlink{multipath_8h_a8fd58c5c9a4f2463735bc00b930e3b05}{connection\-\_\-type} $\ast$)
+\item 
+void \hyperlink{multipath_8h_aaa7581c4e620cba3a4c4feed661257e1}{conn\-\_\-load} (char $\ast$, \hyperlink{multipath_8h_a8fd58c5c9a4f2463735bc00b930e3b05}{connection\-\_\-type} $\ast$)
+\item 
+void \hyperlink{multipath_8h_a3aab886b7ea6986ecdd3e9467a3dfb55}{conn\-\_\-load\-\_\-dir} (\hyperlink{multipath_8h_a8fd58c5c9a4f2463735bc00b930e3b05}{connection\-\_\-type} $\ast$)
+\item 
+int \hyperlink{multipath_8h_abaf63f834712779cca88e9f6bd767159}{conn\-\_\-reload} (char $\ast$)
+\item 
+int \hyperlink{multipath_8h_af311542df5f335666f4b81cf2e78d8a9}{conn\-\_\-reload\-\_\-dir} ()
+\item 
+\hypertarget{multipath_8h_ace8687a25c2cc8e838d1e4ce64809a58}{void {\bfseries conn\-\_\-swap} (\hyperlink{multipath_8h_a8fd58c5c9a4f2463735bc00b930e3b05}{connection\-\_\-type} $\ast$)}\label{multipath_8h_ace8687a25c2cc8e838d1e4ce64809a58}
+
+\item 
+int \hyperlink{multipath_8h_a535edad8cb94781e4a76138ac475cbab}{replicate\-\_\-connection} (\hyperlink{multipath_8h_a8fd58c5c9a4f2463735bc00b930e3b05}{connection\-\_\-type} $\ast$)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+M\-P\-T Data structures. \begin{DoxyAuthor}{Author}
+Almasi, Bela; Debrecen, Hungary 
+\end{DoxyAuthor}
+\begin{DoxyCopyright}{Copyright}
+Project maintained by Almasi, Bela; Debrecen, Hungary 
+\end{DoxyCopyright}
+\begin{DoxyDate}{Date}
+2012.\-08.\-15. 
+\end{DoxyDate}
+
+
+Definition in file \hyperlink{multipath_8h_source}{multipath.\-h}.
+
+
+
+\subsection{Function Documentation}
+\hypertarget{multipath_8h_aaa7581c4e620cba3a4c4feed661257e1}{\index{multipath.\-h@{multipath.\-h}!conn\-\_\-load@{conn\-\_\-load}}
+\index{conn\-\_\-load@{conn\-\_\-load}!multipath.h@{multipath.\-h}}
+\subsubsection[{conn\-\_\-load}]{\setlength{\rightskip}{0pt plus 5cm}void conn\-\_\-load (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{filename, }
+\item[{{\bf connection\-\_\-type} $\ast$}]{conn\-\_\-start}
+\end{DoxyParamCaption}
+)}}\label{multipath_8h_aaa7581c4e620cba3a4c4feed661257e1}
+Load all connections from a specified file 
+\begin{DoxyParams}{Parameters}
+{\em filename} & The file to read \\
+\hline
+{\em conn\-\_\-start} & Can be the last item of the connections list to speed up iteration, but can be the head. If it is N\-U\-L\-L, than \hyperlink{mp__local_8h_ae207e2e02fdde659cbc918346dfc122d}{mp\-\_\-global\-\_\-conn} will be used. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 494 of file inout.\-c.
+
+\hypertarget{multipath_8h_a3aab886b7ea6986ecdd3e9467a3dfb55}{\index{multipath.\-h@{multipath.\-h}!conn\-\_\-load\-\_\-dir@{conn\-\_\-load\-\_\-dir}}
+\index{conn\-\_\-load\-\_\-dir@{conn\-\_\-load\-\_\-dir}!multipath.h@{multipath.\-h}}
+\subsubsection[{conn\-\_\-load\-\_\-dir}]{\setlength{\rightskip}{0pt plus 5cm}void conn\-\_\-load\-\_\-dir (
+\begin{DoxyParamCaption}
+\item[{{\bf connection\-\_\-type} $\ast$}]{conn\-\_\-start}
+\end{DoxyParamCaption}
+)}}\label{multipath_8h_a3aab886b7ea6986ecdd3e9467a3dfb55}
+Load all connections from the configuration directory 
+\begin{DoxyParams}{Parameters}
+{\em conn\-\_\-start} & Can be the last item of the connections list to speed up iteration, but can be the head. If it is N\-U\-L\-L, than \hyperlink{mp__local_8h_ae207e2e02fdde659cbc918346dfc122d}{mp\-\_\-global\-\_\-conn} will be used. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 270 of file inout.\-c.
+
+\hypertarget{multipath_8h_a7d604805a7e403f53c3b4d64b9f6cc36}{\index{multipath.\-h@{multipath.\-h}!conn\-\_\-print@{conn\-\_\-print}}
+\index{conn\-\_\-print@{conn\-\_\-print}!multipath.h@{multipath.\-h}}
+\subsubsection[{conn\-\_\-print}]{\setlength{\rightskip}{0pt plus 5cm}void conn\-\_\-print (
+\begin{DoxyParamCaption}
+\item[{{\bf connection\-\_\-type} $\ast$}]{conn}
+\end{DoxyParamCaption}
+)}}\label{multipath_8h_a7d604805a7e403f53c3b4d64b9f6cc36}
+Print out all connection's information 
+\begin{DoxyParams}{Parameters}
+{\em conn} & The head of the connections list \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 140 of file inout.\-c.
+
+\hypertarget{multipath_8h_abaf63f834712779cca88e9f6bd767159}{\index{multipath.\-h@{multipath.\-h}!conn\-\_\-reload@{conn\-\_\-reload}}
+\index{conn\-\_\-reload@{conn\-\_\-reload}!multipath.h@{multipath.\-h}}
+\subsubsection[{conn\-\_\-reload}]{\setlength{\rightskip}{0pt plus 5cm}int conn\-\_\-reload (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{filename}
+\end{DoxyParamCaption}
+)}}\label{multipath_8h_abaf63f834712779cca88e9f6bd767159}
+Reload all connections' config from a specified file
+
+
+\begin{DoxyParams}{Parameters}
+{\em filename} & The filename which contains the connections \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The same as \hyperlink{mp__local_8h_acfb42844cff2af7ba8fb07d62cfe5793}{conn\-\_\-diff()} 
+\end{DoxyReturn}
+
+
+Definition at line 825 of file inout.\-c.
+
+\hypertarget{multipath_8h_af311542df5f335666f4b81cf2e78d8a9}{\index{multipath.\-h@{multipath.\-h}!conn\-\_\-reload\-\_\-dir@{conn\-\_\-reload\-\_\-dir}}
+\index{conn\-\_\-reload\-\_\-dir@{conn\-\_\-reload\-\_\-dir}!multipath.h@{multipath.\-h}}
+\subsubsection[{conn\-\_\-reload\-\_\-dir}]{\setlength{\rightskip}{0pt plus 5cm}int conn\-\_\-reload\-\_\-dir (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{multipath_8h_af311542df5f335666f4b81cf2e78d8a9}
+Reload all connections from the configuration directory \begin{DoxyReturn}{Returns}
+The same as \hyperlink{mp__local_8h_acfb42844cff2af7ba8fb07d62cfe5793}{conn\-\_\-diff()} 
+\end{DoxyReturn}
+
+
+Definition at line 861 of file inout.\-c.
+
+\hypertarget{multipath_8h_ab19d4d284ad3fb61da6bc09a0976fc66}{\index{multipath.\-h@{multipath.\-h}!conn\-\_\-save@{conn\-\_\-save}}
+\index{conn\-\_\-save@{conn\-\_\-save}!multipath.h@{multipath.\-h}}
+\subsubsection[{conn\-\_\-save}]{\setlength{\rightskip}{0pt plus 5cm}void conn\-\_\-save (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{filename, }
+\item[{{\bf connection\-\_\-type} $\ast$}]{conn\-\_\-start}
+\end{DoxyParamCaption}
+)}}\label{multipath_8h_ab19d4d284ad3fb61da6bc09a0976fc66}
+Write out the changes of all connection in the specified file
+
+
+\begin{DoxyParams}{Parameters}
+{\em filename} & The file contains the connections \\
+\hline
+{\em conn\-\_\-start} & The head of the connections list \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 156 of file inout.\-c.
+
+\hypertarget{multipath_8h_a0c7ab3e528df6f61ccbbce749d081cc9}{\index{multipath.\-h@{multipath.\-h}!conn\-\_\-start@{conn\-\_\-start}}
+\index{conn\-\_\-start@{conn\-\_\-start}!multipath.h@{multipath.\-h}}
+\subsubsection[{conn\-\_\-start}]{\setlength{\rightskip}{0pt plus 5cm}void conn\-\_\-start (
+\begin{DoxyParamCaption}
+\item[{{\bf connection\-\_\-type} $\ast$}]{conn}
+\end{DoxyParamCaption}
+)}}\label{multipath_8h_a0c7ab3e528df6f61ccbbce749d081cc9}
+Start all connection. Open the connection's socket and start the connection threads 
+\begin{DoxyParams}{Parameters}
+{\em conn} & The head of the connections list \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 16 of file connection.\-c.
+
+\hypertarget{multipath_8h_af999625cd9461755cb71499714ce55ba}{\index{multipath.\-h@{multipath.\-h}!conn\-\_\-stop@{conn\-\_\-stop}}
+\index{conn\-\_\-stop@{conn\-\_\-stop}!multipath.h@{multipath.\-h}}
+\subsubsection[{conn\-\_\-stop}]{\setlength{\rightskip}{0pt plus 5cm}void conn\-\_\-stop (
+\begin{DoxyParamCaption}
+\item[{{\bf connection\-\_\-type} $\ast$}]{conn}
+\end{DoxyParamCaption}
+)}}\label{multipath_8h_af999625cd9461755cb71499714ce55ba}
+Stop all connection. Stop the connection's socket and cancel the connection threads 
+\begin{DoxyParams}{Parameters}
+{\em conn} & The head of the connections list \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 34 of file connection.\-c.
+
+\hypertarget{multipath_8h_ae2a3f60a5f5162153d6c912af13f8941}{\index{multipath.\-h@{multipath.\-h}!interface\-\_\-load@{interface\-\_\-load}}
+\index{interface\-\_\-load@{interface\-\_\-load}!multipath.h@{multipath.\-h}}
+\subsubsection[{interface\-\_\-load}]{\setlength{\rightskip}{0pt plus 5cm}void interface\-\_\-load (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{filename, }
+\item[{{\bf tunnel\-\_\-type} $\ast$}]{tun, }
+\item[{{\bf interface\-\_\-type} $\ast$}]{interface}
+\end{DoxyParamCaption}
+)}}\label{multipath_8h_ae2a3f60a5f5162153d6c912af13f8941}
+Load the interface data (addresses) from file. The first interface in the file must be the tunnel interface
+
+Load the data of the interfaces from a file 
+
+Definition at line 116 of file interface.\-c.
+
+\hypertarget{multipath_8h_a535edad8cb94781e4a76138ac475cbab}{\index{multipath.\-h@{multipath.\-h}!replicate\-\_\-connection@{replicate\-\_\-connection}}
+\index{replicate\-\_\-connection@{replicate\-\_\-connection}!multipath.h@{multipath.\-h}}
+\subsubsection[{replicate\-\_\-connection}]{\setlength{\rightskip}{0pt plus 5cm}int replicate\-\_\-connection (
+\begin{DoxyParamCaption}
+\item[{{\bf connection\-\_\-type} $\ast$}]{conn}
+\end{DoxyParamCaption}
+)}}\label{multipath_8h_a535edad8cb94781e4a76138ac475cbab}
+Send data about a connection to its remote peer
+
+
+\begin{DoxyParams}{Parameters}
+{\em conn} & The connection which should be sent \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Returns 0 on successful communication 
+\end{DoxyReturn}
+\begin{DoxyRefDesc}{Todo}
+\item[\hyperlink{todo__todo000005}{Todo}]create compact/packed data, don't send the full connection\-\_\-type struct with empty spaces \end{DoxyRefDesc}
+
+
+\begin{DoxyRefDesc}{Todo}
+\item[\hyperlink{todo__todo000006}{Todo}]use port number received from remote \end{DoxyRefDesc}
+
+
+Definition at line 353 of file command.\-c.
+
+\hypertarget{multipath_8h_a30656efc3c445822fa11f1df3e96ccaa}{\index{multipath.\-h@{multipath.\-h}!tunnel\-\_\-print@{tunnel\-\_\-print}}
+\index{tunnel\-\_\-print@{tunnel\-\_\-print}!multipath.h@{multipath.\-h}}
+\subsubsection[{tunnel\-\_\-print}]{\setlength{\rightskip}{0pt plus 5cm}void tunnel\-\_\-print (
+\begin{DoxyParamCaption}
+\item[{{\bf tunnel\-\_\-type} $\ast$}]{tun}
+\end{DoxyParamCaption}
+)}}\label{multipath_8h_a30656efc3c445822fa11f1df3e96ccaa}
+Print out debug informations about the tunnel information 
+\begin{DoxyParams}{Parameters}
+{\em tun} & The tunnel interface \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 36 of file inout.\-c.
+
+\hypertarget{multipath_8h_ae425603a047bc20a753d7cb672fdb1c8}{\index{multipath.\-h@{multipath.\-h}!tunnel\-\_\-start@{tunnel\-\_\-start}}
+\index{tunnel\-\_\-start@{tunnel\-\_\-start}!multipath.h@{multipath.\-h}}
+\subsubsection[{tunnel\-\_\-start}]{\setlength{\rightskip}{0pt plus 5cm}int tunnel\-\_\-start (
+\begin{DoxyParamCaption}
+\item[{{\bf tunnel\-\_\-type} $\ast$}]{tun}
+\end{DoxyParamCaption}
+)}}\label{multipath_8h_ae425603a047bc20a753d7cb672fdb1c8}
+Open and config the tunnel interface 
+
+Definition at line 18 of file tunnel.\-c.
+
+\hypertarget{multipath_8h_a117f9056196ddf2a891622e3395e32f9}{\index{multipath.\-h@{multipath.\-h}!tunnel\-\_\-stop@{tunnel\-\_\-stop}}
+\index{tunnel\-\_\-stop@{tunnel\-\_\-stop}!multipath.h@{multipath.\-h}}
+\subsubsection[{tunnel\-\_\-stop}]{\setlength{\rightskip}{0pt plus 5cm}int tunnel\-\_\-stop (
+\begin{DoxyParamCaption}
+\item[{{\bf tunnel\-\_\-type} $\ast$}]{tun}
+\end{DoxyParamCaption}
+)}}\label{multipath_8h_a117f9056196ddf2a891622e3395e32f9}
+Stop and close the tunnel device 
+
+Definition at line 131 of file tunnel.\-c.
+

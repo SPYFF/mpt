@@ -1,0 +1,199 @@
+\hypertarget{cli_8h}{\section{/\-Users/kiskele/\-Dropbox/suli/mptcp/source/src/include/cli.h File Reference}
+\label{cli_8h}\index{/\-Users/kiskele/\-Dropbox/suli/mptcp/source/src/include/cli.\-h@{/\-Users/kiskele/\-Dropbox/suli/mptcp/source/src/include/cli.\-h}}
+}
+
+
+Macro definitions used in \hyperlink{cli_8c}{cli.\-c}.  
+
+
+{\ttfamily \#include \char`\"{}multipath.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}../include/cmd.\-def\char`\"{}}\\*
+Include dependency graph for cli.\-h\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{cli_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{cli_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structmpt__int}{mpt\-\_\-int}
+\begin{DoxyCompactList}\small\item\em Structure to save arguments of command mpt interface up$|$down. \end{DoxyCompactList}\item 
+struct \hyperlink{structmpt__addr}{mpt\-\_\-addr}
+\begin{DoxyCompactList}\small\item\em Structure to save arguments of command mpt address add$|$del. \end{DoxyCompactList}\item 
+struct \hyperlink{structmpt__change__path}{mpt\-\_\-change\-\_\-path}
+\begin{DoxyCompactList}\small\item\em Structure to save arguments of command mpt path up$|$down. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{cli_8h_ad7f0a840b59cac96b0d07c4c2e496bf8}{\#define \hyperlink{cli_8h_ad7f0a840b59cac96b0d07c4c2e496bf8}{strstart}(src, pattern)~strncmp(src, pattern, strlen(pattern))}\label{cli_8h_ad7f0a840b59cac96b0d07c4c2e496bf8}
+
+\begin{DoxyCompactList}\small\item\em Src string begins with pattern. \end{DoxyCompactList}\item 
+\hypertarget{cli_8h_a96ceb4c39dcd1bcb2d26fe2a1505b24a}{\#define \hyperlink{cli_8h_a96ceb4c39dcd1bcb2d26fe2a1505b24a}{R\-E\-G\-E\-X\-\_\-\-I\-P\-V4}~\char`\"{}(\mbox{[}\mbox{[}\-:digit\-:\mbox{]}\mbox{]}\{1,3\})\textbackslash{}\textbackslash{}.(\mbox{[}\mbox{[}\-:digit\-:\mbox{]}\mbox{]}\{1,3\})\textbackslash{}\textbackslash{}.(\mbox{[}\mbox{[}\-:digit\-:\mbox{]}\mbox{]}\{1,3\})\textbackslash{}\textbackslash{}.(\mbox{[}\mbox{[}\-:digit\-:\mbox{]}\mbox{]}\{1,3\})\char`\"{}}\label{cli_8h_a96ceb4c39dcd1bcb2d26fe2a1505b24a}
+
+\begin{DoxyCompactList}\small\item\em Regexp pattern to match a part of I\-Pv4 address. \end{DoxyCompactList}\item 
+\hypertarget{cli_8h_a1a994775208f4ef9b13a673e088587b3}{\#define \hyperlink{cli_8h_a1a994775208f4ef9b13a673e088587b3}{R\-E\-G\-E\-X\-\_\-\-I\-P\-V6}~\char`\"{}\mbox{[}0-\/9a-\/f\-A-\/\-F\-:\textbackslash{}\textbackslash{}.\mbox{]}\{1,4\}\char`\"{}}\label{cli_8h_a1a994775208f4ef9b13a673e088587b3}
+
+\begin{DoxyCompactList}\small\item\em Regexp pattern to match a part of I\-Pv6 address. \end{DoxyCompactList}\item 
+\hypertarget{group___return_parser_ga9108cd1d4c34413cc6e69b4585b5f9e2}{\#define \hyperlink{group___return_parser_ga9108cd1d4c34413cc6e69b4585b5f9e2}{P\-A\-R\-S\-E\-\_\-\-O\-K}~0}\label{group___return_parser_ga9108cd1d4c34413cc6e69b4585b5f9e2}
+
+\begin{DoxyCompactList}\small\item\em Successfully parsed and parameters seems good. \end{DoxyCompactList}\item 
+\hypertarget{group___return_parser_ga8d7ab4bd3273f624edb37dc307a64d2b}{\#define \hyperlink{group___return_parser_ga8d7ab4bd3273f624edb37dc307a64d2b}{P\-A\-R\-S\-E\-\_\-\-E\-R\-R\-\_\-\-N\-O\-C\-M\-D}~1}\label{group___return_parser_ga8d7ab4bd3273f624edb37dc307a64d2b}
+
+\begin{DoxyCompactList}\small\item\em No such command. \end{DoxyCompactList}\item 
+\hypertarget{group___return_parser_ga96135b0d207927966bc64801c7cdc7d4}{\#define \hyperlink{group___return_parser_ga96135b0d207927966bc64801c7cdc7d4}{P\-A\-R\-S\-E\-\_\-\-E\-R\-R\-\_\-\-R\-E\-G\-E\-X}~2}\label{group___return_parser_ga96135b0d207927966bc64801c7cdc7d4}
+
+\begin{DoxyCompactList}\small\item\em Invalid regexp format specified in c source. \end{DoxyCompactList}\item 
+\hypertarget{group___return_parser_ga83ab6a4a01e7eb75bfef0d1e3a737827}{\#define \hyperlink{group___return_parser_ga83ab6a4a01e7eb75bfef0d1e3a737827}{P\-A\-R\-S\-E\-\_\-\-E\-R\-R\-\_\-\-I\-P}~3}\label{group___return_parser_ga83ab6a4a01e7eb75bfef0d1e3a737827}
+
+\begin{DoxyCompactList}\small\item\em Wrong I\-P address entered. \end{DoxyCompactList}\item 
+\hypertarget{group___return_parser_ga06ce470ce75d11df137db28e4ab58066}{\#define \hyperlink{group___return_parser_ga06ce470ce75d11df137db28e4ab58066}{P\-A\-R\-S\-E\-\_\-\-E\-R\-R\-\_\-\-M\-A\-S\-K}~4}\label{group___return_parser_ga06ce470ce75d11df137db28e4ab58066}
+
+\begin{DoxyCompactList}\small\item\em Wrong network mask entered. \end{DoxyCompactList}\item 
+\hypertarget{group___return_parser_ga1b8c6e128cf996fcb737414b0d6d512a}{\#define \hyperlink{group___return_parser_ga1b8c6e128cf996fcb737414b0d6d512a}{P\-A\-R\-S\-E\-\_\-\-E\-R\-R\-\_\-\-P\-A\-R\-A\-M\-S}~5}\label{group___return_parser_ga1b8c6e128cf996fcb737414b0d6d512a}
+
+\begin{DoxyCompactList}\small\item\em Wrong parameter list. \end{DoxyCompactList}\item 
+\hypertarget{cli_8h_a3e2a9ab056b5287fb088194ee7ecd789}{\#define {\bfseries C\-L\-I\-\_\-\-C\-O\-M\-M\-A\-N\-D}(name, regex)~name,}\label{cli_8h_a3e2a9ab056b5287fb088194ee7ecd789}
+
+\item 
+\#define \hyperlink{group___mpt_help_ga50c0df023791ae0a02efd91863d86efb}{H\-E\-L\-P\-\_\-\-A\-D\-D\-R}~\char`\"{}mpt addr\mbox{[}ess\mbox{]} \{add $|$ del\} I\-P\-\_\-\-A\-D\-D\-R\-E\-S\-S\mbox{[}/P\-R\-E\-F\-\_\-\-L\-E\-N\mbox{]} dev I\-N\-T\-E\-R\-F\-A\-C\-E\textbackslash{}n\textbackslash{}\textbackslash{}n\textbackslash{}\-I\-P\-\_\-\-A\-D\-D\-R\-E\-S\-S\-: The I\-P address (can be v4 or v6) to manipulate\textbackslash{}n\textbackslash{}\-P\-R\-E\-F\-\_\-\-L\-E\-N\-:   The prefix length of the manipulated address\textbackslash{}n\textbackslash{}                Default prefix length\-: 24 for I\-Pv4, 64 for I\-Pv6.\textbackslash{}n\textbackslash{}\-I\-N\-T\-E\-R\-F\-A\-C\-E\-:  The name of the interface related to the manipulated address\textbackslash{}n\textbackslash{}n\char`\"{}
+\item 
+\#define \hyperlink{group___mpt_help_gaf505be684fba1e60298c721f30b9a0d3}{H\-E\-L\-P\-\_\-\-I\-N\-T}~\char`\"{}mpt int\mbox{[}erface\mbox{]} I\-N\-T\-E\-F\-A\-C\-E \{up $|$ down\}\textbackslash{}n\textbackslash{}\textbackslash{}n\textbackslash{}\-I\-N\-T\-E\-F\-A\-C\-E\-: The name of the interface e.\-g. eth0\textbackslash{}n\textbackslash{}n\char`\"{}
+\item 
+\#define \hyperlink{group___mpt_help_ga17ba7938d1129e4cc183c9eb077a6bee}{H\-E\-L\-P\-\_\-\-R\-E\-L\-O\-A\-D}~\char`\"{}mpt reload \mbox{[}F\-I\-L\-E\-N\-A\-M\-E\mbox{]}\textbackslash{}n\textbackslash{}\textbackslash{}n\textbackslash{}\-F\-I\-L\-E\-N\-A\-M\-E\-:   The file you have recently edited and needed to reload (Optional)\textbackslash{}n\textbackslash{}n\char`\"{}
+\item 
+\#define \hyperlink{group___mpt_help_ga6973c6a7b80a84245dfe8292715f303f}{H\-E\-L\-P\-\_\-\-D\-E\-L\-E\-T\-E}~\char`\"{}mpt delete F\-I\-L\-E\-N\-A\-M\-E\textbackslash{}n\textbackslash{}\textbackslash{}n\textbackslash{}\-F\-I\-L\-E\-N\-A\-M\-E\-:   The file that contains connections no longer needed\textbackslash{}n\textbackslash{}n\char`\"{}
+\item 
+\#define \hyperlink{group___mpt_help_ga4e200188b29b26838c155fb16c4975f6}{H\-E\-L\-P\-\_\-\-S\-A\-V\-E}~\char`\"{}mpt save \mbox{[}F\-I\-L\-E\-N\-A\-M\-E\mbox{]}\textbackslash{}n\textbackslash{}\textbackslash{}n\textbackslash{}\-F\-I\-L\-E\-N\-A\-M\-E\-:   Save changed connection informations to config file (Optional)\textbackslash{}n\textbackslash{}n\char`\"{}
+\item 
+\#define \hyperlink{group___mpt_help_gaef9b02af5c6695a80383b0fe32a99e7f}{H\-E\-L\-P\-\_\-\-P\-A\-T\-H}~\char`\"{}mpt path \{up $|$ down\} S\-R\-C\-\_\-\-I\-P D\-S\-T\-\_\-\-I\-P\textbackslash{}n\textbackslash{}\textbackslash{}n\textbackslash{}up$|$down\-:    Change path status to up or down\textbackslash{}n\textbackslash{}\-S\-R\-C\-\_\-\-I\-P\-:     I\-P address of local endpoint\textbackslash{}n\textbackslash{}\-D\-S\-T\-\_\-\-I\-P\-:     I\-P address of remote peer\textbackslash{}n\textbackslash{}n\char`\"{}
+\item 
+\#define \hyperlink{group___mpt_help_ga69eff6cb726be089c9475ae7428e47a0}{H\-E\-L\-P\-\_\-\-S\-T\-A\-T\-U\-S}~\char`\"{}mpt show status\textbackslash{}n\textbackslash{}n\char`\"{}
+\item 
+\#define \hyperlink{group___mpt_help_gae8a798ec5e0449028e485688e8241b5e}{H\-E\-L\-P}~\hyperlink{group___mpt_help_ga50c0df023791ae0a02efd91863d86efb}{H\-E\-L\-P\-\_\-\-A\-D\-D\-R} \hyperlink{group___mpt_help_gaf505be684fba1e60298c721f30b9a0d3}{H\-E\-L\-P\-\_\-\-I\-N\-T} \hyperlink{group___mpt_help_ga17ba7938d1129e4cc183c9eb077a6bee}{H\-E\-L\-P\-\_\-\-R\-E\-L\-O\-A\-D} \hyperlink{group___mpt_help_ga6973c6a7b80a84245dfe8292715f303f}{H\-E\-L\-P\-\_\-\-D\-E\-L\-E\-T\-E} \hyperlink{group___mpt_help_ga4e200188b29b26838c155fb16c4975f6}{H\-E\-L\-P\-\_\-\-S\-A\-V\-E} \hyperlink{group___mpt_help_gaef9b02af5c6695a80383b0fe32a99e7f}{H\-E\-L\-P\-\_\-\-P\-A\-T\-H} \hyperlink{group___mpt_help_ga69eff6cb726be089c9475ae7428e47a0}{H\-E\-L\-P\-\_\-\-S\-T\-A\-T\-U\-S}
+\end{DoxyCompactItemize}
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \hyperlink{cli_8h_a8772ddb837dae62899db0754b7606766}{C\-M\-D\-T\-Y\-P\-E} \{ \\*
+\hyperlink{cli_8h_a8772ddb837dae62899db0754b7606766abd6d97f9f1df78f7181a6b7193c80c69}{M\-P\-T\-\_\-\-I\-N\-T}, 
+\hyperlink{cli_8h_a8772ddb837dae62899db0754b7606766a788aaa27305c205cc65dc46c44f35d33}{M\-P\-T\-\_\-\-A\-D\-D\-R}, 
+\hyperlink{cli_8h_a8772ddb837dae62899db0754b7606766a7575c9e9545bbb2d6642ead0fd3ffb41}{M\-P\-T\-\_\-\-R\-E\-L\-O\-A\-D}, 
+\hyperlink{cli_8h_a8772ddb837dae62899db0754b7606766ab4e233bcc53bb26cda79d4352affd04f}{M\-P\-T\-\_\-\-D\-E\-L\-E\-T\-E}, 
+\\*
+\hyperlink{cli_8h_a8772ddb837dae62899db0754b7606766aff48713509e8a853655c29f6463c2ab2}{M\-P\-T\-\_\-\-S\-A\-V\-E}, 
+\hyperlink{cli_8h_a8772ddb837dae62899db0754b7606766a8724351451a1aa9afaa929b8407d3c5d}{M\-P\-T\-\_\-\-P\-A\-T\-H}, 
+\hyperlink{cli_8h_a8772ddb837dae62899db0754b7606766a33fb80cf25929755c520c8ce02b7b443}{M\-P\-T\-\_\-\-S\-T\-A\-T\-U\-S}, 
+\hyperlink{cli_8h_a8772ddb837dae62899db0754b7606766aca06a4076ae033a317d13c79e6b4bac1}{M\-P\-T\-\_\-\-N\-O\-C\-M\-D}
+ \}
+\begin{DoxyCompactList}\small\item\em The \hyperlink{cli_8c_acc286b66b5b52e4d8d11e5f6990ce425}{parser()} function sets in its 2nd parameter that witch command were recognised These values are the corresponding indexes of the successfully matched regular expressions or M\-P\-T\-\_\-\-N\-O\-C\-M\-D if nothing was matched. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{cli_8h_ad8c4dc93e9bc191c65d5616602599ffd}{parse\-\_\-cmd} (char $\ast$cmd)
+\item 
+int \hyperlink{cli_8h_ad277b46a2c0363cc077beb9f9d41e6d2}{exec\-\_\-cmd} (char $\ast$cmd, int sock, struct sockaddr $\ast$client, unsigned int csize)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Macro definitions used in \hyperlink{cli_8c}{cli.\-c}. \begin{DoxyAuthor}{Author}
+Kelemen Tamas \href{mailto:kiskele@krc.hu}{\tt kiskele@krc.\-hu} 
+\end{DoxyAuthor}
+
+
+Definition in file \hyperlink{cli_8h_source}{cli.\-h}.
+
+
+
+\subsection{Enumeration Type Documentation}
+\hypertarget{cli_8h_a8772ddb837dae62899db0754b7606766}{\index{cli.\-h@{cli.\-h}!C\-M\-D\-T\-Y\-P\-E@{C\-M\-D\-T\-Y\-P\-E}}
+\index{C\-M\-D\-T\-Y\-P\-E@{C\-M\-D\-T\-Y\-P\-E}!cli.h@{cli.\-h}}
+\subsubsection[{C\-M\-D\-T\-Y\-P\-E}]{\setlength{\rightskip}{0pt plus 5cm}enum {\bf C\-M\-D\-T\-Y\-P\-E}}}\label{cli_8h_a8772ddb837dae62899db0754b7606766}
+
+
+The \hyperlink{cli_8c_acc286b66b5b52e4d8d11e5f6990ce425}{parser()} function sets in its 2nd parameter that witch command were recognised These values are the corresponding indexes of the successfully matched regular expressions or M\-P\-T\-\_\-\-N\-O\-C\-M\-D if nothing was matched. 
+
+\begin{Desc}
+\item[Enumerator]\par
+\begin{description}
+\index{M\-P\-T\-\_\-\-I\-N\-T@{M\-P\-T\-\_\-\-I\-N\-T}!cli.\-h@{cli.\-h}}\index{cli.\-h@{cli.\-h}!M\-P\-T\-\_\-\-I\-N\-T@{M\-P\-T\-\_\-\-I\-N\-T}}\item[{\em 
+\hypertarget{cli_8h_a8772ddb837dae62899db0754b7606766abd6d97f9f1df78f7181a6b7193c80c69}{M\-P\-T\-\_\-\-I\-N\-T}\label{cli_8h_a8772ddb837dae62899db0754b7606766abd6d97f9f1df78f7181a6b7193c80c69}
+}]mpt int\mbox{[}erface\mbox{]} I\-F \{up$|$down\} \index{M\-P\-T\-\_\-\-A\-D\-D\-R@{M\-P\-T\-\_\-\-A\-D\-D\-R}!cli.\-h@{cli.\-h}}\index{cli.\-h@{cli.\-h}!M\-P\-T\-\_\-\-A\-D\-D\-R@{M\-P\-T\-\_\-\-A\-D\-D\-R}}\item[{\em 
+\hypertarget{cli_8h_a8772ddb837dae62899db0754b7606766a788aaa27305c205cc65dc46c44f35d33}{M\-P\-T\-\_\-\-A\-D\-D\-R}\label{cli_8h_a8772ddb837dae62899db0754b7606766a788aaa27305c205cc65dc46c44f35d33}
+}]mpt addr\mbox{[}ess\mbox{]} \{add$|$del\} I\-P\mbox{[}/\-P\-R\-E\-F\-I\-X\mbox{]} dev I\-F \index{M\-P\-T\-\_\-\-R\-E\-L\-O\-A\-D@{M\-P\-T\-\_\-\-R\-E\-L\-O\-A\-D}!cli.\-h@{cli.\-h}}\index{cli.\-h@{cli.\-h}!M\-P\-T\-\_\-\-R\-E\-L\-O\-A\-D@{M\-P\-T\-\_\-\-R\-E\-L\-O\-A\-D}}\item[{\em 
+\hypertarget{cli_8h_a8772ddb837dae62899db0754b7606766a7575c9e9545bbb2d6642ead0fd3ffb41}{M\-P\-T\-\_\-\-R\-E\-L\-O\-A\-D}\label{cli_8h_a8772ddb837dae62899db0754b7606766a7575c9e9545bbb2d6642ead0fd3ffb41}
+}]mpt reload \mbox{[}F\-I\-L\-E\-N\-A\-M\-E\mbox{]} \index{M\-P\-T\-\_\-\-D\-E\-L\-E\-T\-E@{M\-P\-T\-\_\-\-D\-E\-L\-E\-T\-E}!cli.\-h@{cli.\-h}}\index{cli.\-h@{cli.\-h}!M\-P\-T\-\_\-\-D\-E\-L\-E\-T\-E@{M\-P\-T\-\_\-\-D\-E\-L\-E\-T\-E}}\item[{\em 
+\hypertarget{cli_8h_a8772ddb837dae62899db0754b7606766ab4e233bcc53bb26cda79d4352affd04f}{M\-P\-T\-\_\-\-D\-E\-L\-E\-T\-E}\label{cli_8h_a8772ddb837dae62899db0754b7606766ab4e233bcc53bb26cda79d4352affd04f}
+}]mpt delete F\-I\-L\-E\-N\-A\-M\-E \index{M\-P\-T\-\_\-\-S\-A\-V\-E@{M\-P\-T\-\_\-\-S\-A\-V\-E}!cli.\-h@{cli.\-h}}\index{cli.\-h@{cli.\-h}!M\-P\-T\-\_\-\-S\-A\-V\-E@{M\-P\-T\-\_\-\-S\-A\-V\-E}}\item[{\em 
+\hypertarget{cli_8h_a8772ddb837dae62899db0754b7606766aff48713509e8a853655c29f6463c2ab2}{M\-P\-T\-\_\-\-S\-A\-V\-E}\label{cli_8h_a8772ddb837dae62899db0754b7606766aff48713509e8a853655c29f6463c2ab2}
+}]mpt save \mbox{[}F\-I\-L\-E\-N\-A\-M\-E\mbox{]} \index{M\-P\-T\-\_\-\-P\-A\-T\-H@{M\-P\-T\-\_\-\-P\-A\-T\-H}!cli.\-h@{cli.\-h}}\index{cli.\-h@{cli.\-h}!M\-P\-T\-\_\-\-P\-A\-T\-H@{M\-P\-T\-\_\-\-P\-A\-T\-H}}\item[{\em 
+\hypertarget{cli_8h_a8772ddb837dae62899db0754b7606766a8724351451a1aa9afaa929b8407d3c5d}{M\-P\-T\-\_\-\-P\-A\-T\-H}\label{cli_8h_a8772ddb837dae62899db0754b7606766a8724351451a1aa9afaa929b8407d3c5d}
+}]mpt path \{up$|$down\} S\-R\-C\-\_\-\-I\-P D\-S\-T\-\_\-\-I\-P \index{M\-P\-T\-\_\-\-S\-T\-A\-T\-U\-S@{M\-P\-T\-\_\-\-S\-T\-A\-T\-U\-S}!cli.\-h@{cli.\-h}}\index{cli.\-h@{cli.\-h}!M\-P\-T\-\_\-\-S\-T\-A\-T\-U\-S@{M\-P\-T\-\_\-\-S\-T\-A\-T\-U\-S}}\item[{\em 
+\hypertarget{cli_8h_a8772ddb837dae62899db0754b7606766a33fb80cf25929755c520c8ce02b7b443}{M\-P\-T\-\_\-\-S\-T\-A\-T\-U\-S}\label{cli_8h_a8772ddb837dae62899db0754b7606766a33fb80cf25929755c520c8ce02b7b443}
+}]mpt show status \index{M\-P\-T\-\_\-\-N\-O\-C\-M\-D@{M\-P\-T\-\_\-\-N\-O\-C\-M\-D}!cli.\-h@{cli.\-h}}\index{cli.\-h@{cli.\-h}!M\-P\-T\-\_\-\-N\-O\-C\-M\-D@{M\-P\-T\-\_\-\-N\-O\-C\-M\-D}}\item[{\em 
+\hypertarget{cli_8h_a8772ddb837dae62899db0754b7606766aca06a4076ae033a317d13c79e6b4bac1}{M\-P\-T\-\_\-\-N\-O\-C\-M\-D}\label{cli_8h_a8772ddb837dae62899db0754b7606766aca06a4076ae033a317d13c79e6b4bac1}
+}]None of the commands above was matched. \end{description}
+\end{Desc}
+
+
+Definition at line 40 of file cli.\-h.
+
+
+
+\subsection{Function Documentation}
+\hypertarget{cli_8h_ad277b46a2c0363cc077beb9f9d41e6d2}{\index{cli.\-h@{cli.\-h}!exec\-\_\-cmd@{exec\-\_\-cmd}}
+\index{exec\-\_\-cmd@{exec\-\_\-cmd}!cli.h@{cli.\-h}}
+\subsubsection[{exec\-\_\-cmd}]{\setlength{\rightskip}{0pt plus 5cm}int exec\-\_\-cmd (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{cmd, }
+\item[{int}]{sock, }
+\item[{struct sockaddr $\ast$}]{client, }
+\item[{unsigned int}]{csize}
+\end{DoxyParamCaption}
+)}}\label{cli_8h_ad277b46a2c0363cc077beb9f9d41e6d2}
+Check C\-L\-I command syntax on server side and execute that \begin{DoxyRefDesc}{Todo}
+\item[\hyperlink{todo__todo000004}{Todo}]Check result of commands and if something went wrong return an error code and put some explanation in cmd parameter.\end{DoxyRefDesc}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em cmd} & C\-L\-I command received \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Execution of command failed or succeeded 
+\end{DoxyReturn}
+
+
+Definition at line 360 of file cli.\-c.
+
+\hypertarget{cli_8h_ad8c4dc93e9bc191c65d5616602599ffd}{\index{cli.\-h@{cli.\-h}!parse\-\_\-cmd@{parse\-\_\-cmd}}
+\index{parse\-\_\-cmd@{parse\-\_\-cmd}!cli.h@{cli.\-h}}
+\subsubsection[{parse\-\_\-cmd}]{\setlength{\rightskip}{0pt plus 5cm}int parse\-\_\-cmd (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{cmd}
+\end{DoxyParamCaption}
+)}}\label{cli_8h_ad8c4dc93e9bc191c65d5616602599ffd}
+Check C\-L\-I command syntax on client side to send out only valid commands
+
+
+\begin{DoxyParams}{Parameters}
+{\em cmd} & C\-L\-I command input \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+See \hyperlink{group___return_parser}{Parser Errors} 
+\end{DoxyReturn}
+
+
+Definition at line 299 of file cli.\-c.
+

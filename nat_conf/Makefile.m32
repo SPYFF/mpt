@@ -1,0 +1,27 @@
+SHELL=/bin/bash
+CC=gcc
+OUT32=nat_conf
+SRCS=$(wildcard *.c)
+OBJS32=$(SRCS:%.c=%.o)
+#LIBS=-pthread
+#CFLAGS=-I../include -O2 -static
+#CFLAGS=-I../include -O2
+
+.PHONY: clean exec
+
+all: $(OUT32) $(OUT64)
+
+$(OUT32): $(OBJS32)
+	@echo "  BUILD $(OUT32)"
+	@$(CC) $(CFLAGS) $(OBJS32) -m32 $(LIBS) -o $(OUT32)
+
+%.o: %.c
+	@echo "  CC    $<"
+	@$(CC) $(CFLAGS) -m32 -c $< -o $@ -Wall
+
+exec: $(OBJS32)
+	$(CC) $(OBJS32) $(LIBS) -o $(OUT32)
+
+clean:
+	rm -f $(OBJS32)
+	rm -f $(OUT32)
