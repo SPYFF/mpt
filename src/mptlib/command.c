@@ -376,9 +376,9 @@ void peer_route(char *op, path_type *peer)
     }
     inet_ntop(af, &peer->ip_remote[start], destination_host, 128);
     inet_ntop(af, &peer->ip_gw[start], gateway, 128);
-    sprintf(command, "bin/mpt_peer_routes.sh %s %d %s %s %s", op, peer->ip_version, destination_host, gateway, peer->interface);
+    sprintf(command, "sh bin/mpt_peer_routes.sh %s %d %s %s %s", op, peer->ip_version, destination_host, gateway, peer->interface);
+    printf("%s\n", command);
     system(command);
-
 }
 
 
@@ -427,7 +427,7 @@ DEBUG("add_routes after peer_route\n");
 DEBUG("add_routes network_route %d\n", j);
     inet_ntop(af, &network->destination[start], destination_network, 128);
     inet_ntop(af, &conn->ip_remote[start], gateway, 128);
-    sprintf(command, "bin/mpt_routes.sh add %d %s %d %s", network->version, destination_network, network->destination_prefix_length, gateway);
+    sprintf(command, "sh bin/mpt_routes.sh add %d %s %d %s", network->version, destination_network, network->destination_prefix_length, gateway);
     system(command);
   }
 }
@@ -476,7 +476,7 @@ void del_routes(connection_type* conn)
 
     inet_ntop(af, &network->destination[start], destination_network, 128);
     inet_ntop(af, &conn->ip_remote[start], gateway, 128);
-    sprintf(command, "bin/mpt_routes.sh del %d %s %d %s", network->version, destination_network, network->destination_prefix_length, gateway);
+    sprintf(command, "sh bin/mpt_routes.sh del %d %s %d %s", network->version, destination_network, network->destination_prefix_length, gateway);
     system(command);
   }
 }

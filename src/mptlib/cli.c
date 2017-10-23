@@ -380,10 +380,10 @@ int exec_cmd(char * cmd, int sock, struct sockaddr * client, unsigned int csize)
                 printf("mpt int %s %s\n", ret_int->interface, ret_int->mark);
                 if(strcmp(ret_int->mark, "down") == 0) {
                     interface_change_status(ret_int->interface, STAT_IF_DOWN);
-                    sprintf(cmdstr, "bin/mpt_int_updown.sh %s %s", ret_int->interface, ret_int->mark);
+                    sprintf(cmdstr, "sh bin/mpt_int_updown.sh %s %s", ret_int->interface, ret_int->mark);
 	            system(cmdstr);
                 } else {
-                    sprintf(cmdstr, "bin/mpt_int_updown.sh %s %s", ret_int->interface, ret_int->mark);
+                    sprintf(cmdstr, "sh bin/mpt_int_updown.sh %s %s", ret_int->interface, ret_int->mark);
 	            system(cmdstr);
 		    connection_type *conn = mp_global_conn;
 		    while(conn) {
@@ -405,7 +405,7 @@ int exec_cmd(char * cmd, int sock, struct sockaddr * client, unsigned int csize)
             if(rv == PARSE_OK) {
                 struct mpt_addr * ret_addr = ret;
 
-                sprintf(cmdstr, "bin/mpt_addr_adddel.sh %s %s", ret_addr->op, ret_addr->ip);
+                sprintf(cmdstr, "sh bin/mpt_addr_adddel.sh %s %s", ret_addr->op, ret_addr->ip);
                 if(ret_addr->mask) sprintf(cmdstr+strlen(cmdstr), "/%s", ret_addr->mask);
                 else sprintf(cmdstr+strlen(cmdstr), "/24");
                 sprintf(cmdstr+strlen(cmdstr), " %s", ret_addr->dev);
@@ -562,7 +562,7 @@ int exec_cmd(char * cmd, int sock, struct sockaddr * client, unsigned int csize)
 
                 FILE * fd;
 
-                fd = fmemopen(buff, SIZE_DGRAM, "wb");
+                fd = android_fmemopen(buff, SIZE_DGRAM, "wb");
                 memset(buff, 0, SIZE_DGRAM);
                 tunnel_print(fd);
                 connection_print(fd);

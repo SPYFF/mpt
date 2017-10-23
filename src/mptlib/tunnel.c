@@ -23,7 +23,7 @@ int tunnel_start (tunnel_type *tunp)
     struct ifreq ifr;
     if (!tunp) tunp = &tun; // we use the global tun if called with NULL argument
 
-    strcpy(tunp->device, "/dev/net/tun");
+    strcpy(tunp->device, "/dev/tun");
 
     if ((tunp->fd = open(tunp->device, O_RDWR)) < 0)
         exerror("Tunnel inteface opening error. ", errno);
@@ -51,18 +51,18 @@ int tunnel_start (tunnel_type *tunp)
 
     if (tunp->ip4len) {
         inet_ntop(AF_INET, &tunp->ip4, ipstr, 255);
-        sprintf(cmdbuf,"bin/mpt_tunnel_start.sh ipv4 %s %s/%d %d",
+        sprintf(cmdbuf,"sh bin/mpt_tunnel_start.sh ipv4 %s %s/%d %d",
 	        tunp->interface, ipstr, tunp->ip4len, tunp->mtu);
-//printf("Cmd: %s\n", cmdbuf);
+printf("Cmd: %s\n", cmdbuf);
 DEBUG("Initializing tunnel interfaces tunnel_start.sh\n");
         system(cmdbuf);
     }
 
     if (tunp->ip6len ) {
         inet_ntop(AF_INET6, &tunp->ip6, ipstr, 255);
-        sprintf(cmdbuf,"bin/mpt_tunnel_start.sh ipv6 %s %s/%d %d",
+        sprintf(cmdbuf,"sh bin/mpt_tunnel_start.sh ipv6 %s %s/%d %d",
 	        tunp->interface, ipstr, tunp->ip6len, tunp->mtu);
-//printf("Cmd: %s\n", cmdbuf);
+printf("Cmd: %s\n", cmdbuf);
         system(cmdbuf);
     }
 
@@ -136,8 +136,8 @@ int tunnel_stop(tunnel_type *tunp)
     if (!tunp) tunp = &tun; // if called with NULL we use the global tun variable
     mpt_end;
     buff_end;
-    pthread_cancel(tunp->tunnel_read);
-    pthread_cancel(tunp->cmd_read);
+    pthread_kill(tunp->tunnel_read,SIGUSR1);
+    pthread_kill(tunp->cmd_read,SIGUSR1);
     close(tunp->cmd_socket_rcv);
 //    close(tun->cmd_socket_snd);
     return close(tunp->fd);

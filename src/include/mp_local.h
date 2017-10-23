@@ -129,6 +129,7 @@ char *trim(char *);
 void mac_pton(char *, char *);
 void set_ipstr(char* , bit_32 * , bit_8 );
 void mac_ntop(char *, char *);
+FILE *android_fmemopen(unsigned char *, size_t, const char *);
 
 void    conn_print_item(FILE *stream, connection_type *);
 int     path_open_socket(path_type *);
@@ -165,6 +166,8 @@ void send_circulate_packets(connection_type *, int );
 void set_ipstr(char *, bit_32 *, bit_8 );
 void conn_setup_fromdict(connection_type *, dictionary *);
 dictionary * iniparser_load_descriptor(FILE *, const char *);
+
+void send_circulate_packets(connection_type *conn, int full);
 
 void interface_load(char *, tunnel_type *);
 

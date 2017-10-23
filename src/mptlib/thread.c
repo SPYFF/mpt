@@ -146,14 +146,14 @@ void * socket_read_thread(void * arg)
         blen = recvfrom(path->socket, pgre->buffer, sizeof(pgre->buffer), 0, (struct sockaddr *)&client, &client_size);
         gettimeofday(&pgre->timestamp, NULL);
         if ( (blen < 0) && (con->reorder_window) && (con->circlepackets) ) {
-                    buff_lock;
-#include "send_circle.h"
+                    pthread_mutex_lock(&mp_buff_lockvar);
+
                     timeradd(&con->last_receive, &con->max_buffdelay, &tmptv);
                     if ( (con->circlepackets) && (timercmp(&tmptv, &pgre->timestamp, < )) ) {
                           DEBUG("Receive timer exceeded ");
                           send_circulate_packets(con, 1); // The maximum buffering time has elapsed
                     }
-                    buff_unlock;
+                    pthread_mutex_unlock(&mp_buff_lockvar);
                     continue;
         }
         if (blen < 8) continue;
@@ -178,8 +178,8 @@ void * socket_read_thread(void * arg)
 //      printf("Rcv Data,  Int: %s  GREseq:%d grebufflen:%d  grelen:%d   Waited seq:%d Type:%02X \n", path->interface, pgre->seq, pgre->grebufflen, pgre->grelen, con->seq_start, buff[0]);
 
         if ((unsigned char)buff[0] < 0xA0 ){
-           buff_lock;
-#include "send_circle.h"
+           pthread_mutex_lock(&mp_buff_lockvar);
+
            memcpy(&con->last_receive, &pgre->timestamp, sizeof(struct timeval));
            if ((!con->reorder_window) || (!greseq)) {
               write(tun.fd, &pgre->buffer[grelen], blen);
@@ -234,7 +234,7 @@ void * socket_read_thread(void * arg)
               }
            }
 BUFF_UNLOCK_LABEL:
-           buff_unlock;
+           pthread_mutex_unlock(&mp_buff_lockvar);
           // usleep(2000); // give a chance to other paths to receive
         } // if buff[0] < A0 ******************************** CMD Arrived ***********************************************
         else { pgre->grebufflen = 0;   // The CMD packet is in buff[] with length blen; we sign the buffer place as empty
@@ -294,8 +294,8 @@ void * circulatebuffer_handler(void * arg)
     sleeptime = 1000*sleeptime; // sleeptime in microseconds
     while (1) {
         if (con->reorder_window) {
-              buff_lock;
-#include "send_circle.h"
+              pthread_mutex_lock(&mp_buff_lockvar);
+
               if (con->circlepackets) {
                    gettimeofday(&ctime, NULL);
                    cind = con->circlestart -1;
@@ -340,7 +340,7 @@ DEBUG("circulatebuffer_handler: Too old packet at index %d (GRE Seq: %d)\n", fin
 DEBUG("circulatebuffer_handler:       sent out %d packets; lost %d packets.\n", np-con->circlepackets, lostp);
                    }  // if findex
               }  // ic con->circle_packets
-              buff_unlock;
+              pthread_mutex_unlock(&mp_buff_lockvar);
         } // if con->reorder_window
         usleep(sleeptime);
     } // while 1

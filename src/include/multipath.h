@@ -10,6 +10,7 @@
 #define MULTIPATH_H
 
 #include <unistd.h>
+#include <signal.h>
 #include <fcntl.h>
 #include <stdlib.h>
 #include <stdio.h>

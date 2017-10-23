@@ -61,6 +61,9 @@ int main(int argc, char **argv)
         }
         sleep(2);
     } // while 1
+    
+    //XXX there must be a better way to do that
+    system("while ip rule delete from 0/0 to 0/0 table 9999 2>/dev/null; do true; done");
 
     connection_stop(NULL);
     tunnel_stop(NULL);

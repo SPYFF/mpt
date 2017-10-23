@@ -94,6 +94,16 @@ int get_privateip4(char *result, const char *intname)
     return 1;
 }
 
+void removenoipchar(char *str) {
+	char *pr = str, *pw = str;
+	while (*pr) {
+		while ( (*pr) && ( (*pr != '.') && ((*pr > '9') || (*pr < '0')) ) ) pr++;
+		*pw = *pr;
+		pw++;
+		pr++;
+	}
+	*pw = '\0';
+}
 
 // function wgetgetglobalip4
 // Determines the global ip address of an interface (maybe behind a NAT-Box) using web-site download
@@ -103,17 +113,6 @@ int get_privateip4(char *result, const char *intname)
 //      gateway: String containing the gateway to use (can be NULL)
 // Returns: 1 on sucess, 0 otherwise
 int wgetglobalip4(char *globalip, char *intname, char *gateway) { //http get
-
-    void removenoipchar(char *str) {
-        char *pr = str, *pw = str;
-        while (*pr) {
-            while ( (*pr) && ( (*pr != '.') && ((*pr > '9') || (*pr < '0')) ) ) pr++;
-            *pw = *pr;
-            pw++;
-            pr++;
-        }
-        *pw = '\0';
-    }
 
     struct sockaddr_in6 peer;
     struct addrinfo hints;
@@ -214,7 +213,12 @@ ROUTE_DEL:
 
 }
 
-
+char hextodec(char c)
+{
+   char b = tolower(c);
+   if ( ( b >= '0') && (b<= '9') ) return (b - '0');
+   return (b-'a'+10);
+}
 
 // function get_globalip4
 // Determines the global ip address of an interface (maybe behind a NAT-Box)
@@ -223,12 +227,7 @@ ROUTE_DEL:
 //      intname: The name of the interface, for which the global IP address must be determined (can be NULL)
 //      gateway: String containing the gateway to use (can be NULL)
 // Returns: 1 on sucess, 0 otherwise
-int get_globalip4(char *globalip, char *intname, char *gateway) { //get from opendns resolver1.opendns.com
-    char hextodec(char c) {
-       char b = tolower(c);
-       if ( ( b >= '0') && (b<= '9') ) return (b - '0');
-       return (b-'a'+10);
-    }
+int get_globalip4(char *globalip, char *intname, char *gateway) { //get from opendns resolver1.opendns.
 
   //  char  dnstxt[] = "03c601200001000000000001046d796970076f70656e646e7303636f6d00000100010000291000000000000000";
     char  dnstxt[]="dc8601000001000000000000046d796970076f70656e646e7303636f6d0000010001";
@@ -838,7 +837,7 @@ int connection_write_memory(char *memptr, connection_type *conn, bit_32 memsize)
 {
     char *buff = memptr;
     FILE * fd;
-    fd = fmemopen(buff, memsize, "wb");
+    fd = android_fmemopen(buff, memsize, "wb");
     memset(buff, 0, memsize);
     connection_save(fd, conn);
     fflush(fd);
@@ -853,7 +852,7 @@ int connection_read_memory(connection_type *conn, char *memptr, bit_32 memsize)
     char *buff = memptr;
     dictionary *conf;
 
-    fd = fmemopen(buff, memsize, "r");
+    fd = android_fmemopen(buff, memsize, "r");
     if (!fd) {
         printf("connection_read_memory:  fmemopen failed\n");
         return(0);
@@ -1110,4 +1109,27 @@ void set_ipstr(char *result, bit_32 * ip, bit_8 version)
     } else if (version == 4) {
 	inet_ntop(AF_INET, &ip[3], result, result_size);
     }
+}
+
+/*implementation form an old Tuxpaint commit*/
+FILE *android_fmemopen(unsigned char *data, size_t size, const char *mode)
+{
+    unsigned int i;
+    FILE * fi;
+
+    fi = fopen("./temp_file_buff", "w");
+    if (fi == NULL)
+    {
+        return (NULL);
+    }
+
+    for (i = 0; i < size; i++)
+    {
+        fwrite(data, 1, 1, fi);
+        data++;
+    }
+
+    fclose(fi);
+    fi = fopen("./temp_file_buff", mode);
+    return (fi);
 }
