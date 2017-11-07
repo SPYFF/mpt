@@ -17,7 +17,7 @@ $ make
 ```
 
 ## Configuration
-Here is a guide for configure this application. There are some steps which makes this readme too length so please visit the link below.
+Here is a guide for configure this application. There are some steps which makes this readme too long so please visit the link below.
 More information: [http://irh.inf.unideb.hu/user/szilagyi/sites/default/files/mpt/usermanual.pdf](http://irh.inf.unideb.hu/user/szilagyi/sites/default/files/mpt/usermanual.pdf)
 
 ## Running the software
