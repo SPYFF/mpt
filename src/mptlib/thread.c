@@ -52,6 +52,9 @@ void * tunnel_read_thread (void * arg)
                mp_global_conn);
         if (con) {
 //DEBUG("  Connection found\n");
+            path = path_from_lut(con, ver, buff);
+            if(path != NULL)
+              goto BUILD_GRE_HEADER;
             pind = con->path_index;
             path = con->pathselectionlist[pind];
             c=0;
@@ -82,6 +85,7 @@ void * tunnel_read_thread (void * arg)
             }
 
 //DEBUG("  Beginning to fill GRE header\n");
+BUILD_GRE_HEADER:            
             sock = path->socket;
             saddr = (struct sockaddr *)&(path->peer);
             grelen = con->gre_length;

@@ -882,6 +882,7 @@ void conn_setup_fromdict(connection_type *conn, dictionary *conf)
     p = conn->mpath;
     for (index = 0; index < conn->path_count; ++index, ++p) {
         sprintf(section, "path_%d", index);
+        p->connection = conn;
         _setup_pth(conf, section, p);
         if (p->cmd_default) conn->default_cmd_path = p;
 //        p->peer.sin6_family = AF_INET6;
@@ -1056,6 +1057,22 @@ void _setup_pth(dictionary * conf, char *section, path_type * path)
     sprintf(conf_key, "%s:status", section);
     path->status = iniparser_getint(conf, conf_key, 0);
 
+    connection_type *conn = (connection_type *)path->connection;
+    sprintf(conf_key, "%s:tcp_src", section);
+    read_str = iniparser_getstring(conf, conf_key, "");
+    populate_lut(conn->tcp_src_lut, read_str, path);
+
+    sprintf(conf_key, "%s:tcp_dst", section);
+    read_str = iniparser_getstring(conf, conf_key, "");
+    populate_lut(conn->tcp_dst_lut, read_str, path);
+
+    sprintf(conf_key, "%s:udp_src", section);
+    read_str = iniparser_getstring(conf, conf_key, "");
+    populate_lut(conn->udp_src_lut, read_str, path);
+
+    sprintf(conf_key, "%s:udp_dst", section);
+    read_str = iniparser_getstring(conf, conf_key, "");
+    populate_lut(conn->udp_dst_lut, read_str, path);
 }
 
 void _setup_net(dictionary * conf, char *section, network_type * net)
@@ -1111,3 +1128,15 @@ void set_ipstr(char *result, bit_32 * ip, bit_8 version)
 	inet_ntop(AF_INET, &ip[3], result, result_size);
     }
 }
+
+void populate_lut(path_type *p[], char *port_nums, path_type *current_path)
+{
+  if(strcmp(port_nums, "") == 0 || port_nums == NULL)
+    return;
+  char *tok;
+  tok = strtok(port_nums, " ,:;");
+  while(tok != NULL){
+    p[htons(atoi(tok))] = current_path;
+    tok = strtok(NULL, " ,:;");
+  }
+} 

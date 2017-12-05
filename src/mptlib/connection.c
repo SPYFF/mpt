@@ -99,6 +99,44 @@ path_type *path_search_remote_ip(bit_32 *r_ip)
 }
 
 
+/*
+Search path from a lookup table for flow-based communication
+
+@param conn the actual connection
+@param ip_ver IPv4 or IPv6
+@param packet pointer to the bytes of the packet
+*/
+path_type *path_from_lut(connection_type *conn, int ip_ver, char *packet)
+{
+  int protocol = 9; //XXX: magic numbers for IP header byte offsets
+  int src_port = 20;
+  int dst_port = 22;
+
+  if(ip_ver == 6){
+    protocol = 6;
+    src_port = 40;
+    dst_port = 42;
+  }
+
+  uint16_t packet_src_port = *((uint16_t *)&packet[src_port]);
+  uint16_t packet_dst_port = *((uint16_t *)&packet[dst_port]);
+
+  if(packet[protocol] == 6){ //TCP
+    if(conn->tcp_src_lut[packet_src_port] != NULL)
+      return conn->tcp_src_lut[packet_src_port];
+    if(conn->tcp_dst_lut[packet_dst_port] != NULL)
+      return conn->tcp_dst_lut[packet_dst_port];
+  }
+  if(packet[protocol] == 17){ //UDP
+    if(conn->udp_src_lut[packet_src_port] != NULL)
+      return conn->udp_src_lut[packet_src_port];
+    if(conn->udp_dst_lut[packet_dst_port] != NULL)
+      return conn->udp_dst_lut[packet_dst_port];
+  }
+  return NULL;
+}
+
+
 
 
 /**

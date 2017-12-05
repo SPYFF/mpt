@@ -136,6 +136,7 @@ connection_type *conn_search_ip(bit_8, bit_32 *, bit_32 *, connection_type *);
 connection_type *conn_search_name( char *conn_name);
 connection_type *conn_empty_search(connection_type *conn);
 path_type *path_search_remote_ip(bit_32 *);
+path_type *path_from_lut(connection_type *conn, int ip_ver, char *packet);
 int comp_ipv6(connection_type *conn, bit_32 *local, bit_32 *remote);
 int comp_ipv4(connection_type *conn, bit_32 *local, bit_32 *remote);
 void set_ipv6_network(bit_32* ipv6_address, bit_32* mask, bit_32* network);
@@ -165,6 +166,7 @@ void send_circulate_packets(connection_type *, int );
 void set_ipstr(char *, bit_32 *, bit_8 );
 void conn_setup_fromdict(connection_type *, dictionary *);
 dictionary * iniparser_load_descriptor(FILE *, const char *);
+void populate_lut(path_type *p[], char *port_nums, path_type *current_path);
 
 void interface_load(char *, tunnel_type *);
 

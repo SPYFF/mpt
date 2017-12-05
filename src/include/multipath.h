@@ -142,6 +142,10 @@ typedef struct connection_struct
     network_type networks[MAX_NETWORKS]; ///< The networks connected by the connection
     grebuff_type *circlebuff[CIRCLE_SIZE];  ///< The circulate buffer for the connection
     path_type  *pathselectionlist[PATH_SELECTION_LENGTH]; ///< This vector contains the sequence of indices of paths, according to their weights out
+    path_type  *tcp_src_lut[65536];
+    path_type  *tcp_dst_lut[65536];
+    path_type  *udp_src_lut[65536];
+    path_type  *udp_dst_lut[65536];
     bit_16  pathselectionlength;  ///< The length of the pathselectionindex vector
     bit_16 path_index;  ///< The index of the actual path in the pathselectionlist, shows the path to send the next packet
     bit_32  seq_start;  ///< The GRE sequence number of the packet in the circlestart position, we are waiting for this seq
