@@ -18,7 +18,7 @@ $ make
 
 ## Configuration
 Here is a guide for configure this application. There are some steps which makes this readme too long so please visit the link below.
-More information: [http://irh.inf.unideb.hu/user/szilagyi/sites/default/files/mpt/usermanual.pdf](http://irh.inf.unideb.hu/user/szilagyi/sites/default/files/mpt/usermanual.pdf)
+More information: [https://irh.inf.unideb.hu/~szilagyi/wp-content/uploads/2019/05/usermanual.pdf](https://irh.inf.unideb.hu/~szilagyi/wp-content/uploads/2019/05/usermanual.pdf)
 
 ## Running the software
 Start the `mptsrv` binary in root mode. Double check if the configuration is correct and match with the real world test setup.
