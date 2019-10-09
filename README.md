@@ -34,5 +34,5 @@ The intent of the software is nework layer multipath research. We have a few pap
 * Android implementation and QoE triggered application agnostic multipath 
 * and few more approach...
 
-MPT papers: [http://irh.inf.unideb.hu/user/szilagyi/mpt_papers](http://irh.inf.unideb.hu/user/szilagyi/mpt_papers)
+MPT papers: [https://irh.inf.unideb.hu/~szilagyi/index.php/en/publication/](https://irh.inf.unideb.hu/~szilagyi/index.php/en/publication/)
 
